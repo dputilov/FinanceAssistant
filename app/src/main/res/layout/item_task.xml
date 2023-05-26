@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
+    android:layout_margin="5dp"
+    android:background="@drawable/item_main"
+    android:elevation="3dp"
+    >
+
+    <CheckBox
+        android:id="@+id/cbFinish"
+        android:layout_marginStart="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/llMain"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="3dp"
+        app:layout_constraintTop_toTopOf="@+id/cbFinish"
+        app:layout_constraintStart_toEndOf="@id/cbFinish"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <ImageView
+                android:id="@+id/imgType"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_margin="2dp"
+                android:layout_gravity="left|top"
+                android:gravity="left|top"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                >
+            </ImageView>
+
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginStart="21dp"
+                android:layout_marginEnd="10dp"
+                android:text=""
+                android:textSize="18sp"
+                app:layout_goneMarginStart="5dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imgType"
+                app:layout_constraintEnd_toStartOf="@+id/imgDate"
+                >
+
+            </TextView>
+
+            <ImageView
+                android:id="@+id/imgDate"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_margin="2dp"
+                android:layout_gravity="left|top"
+                android:gravity="left|top"
+                android:src="@drawable/credit_finish"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <LinearLayout
+                android:id="@+id/llDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/item_title_date"
+
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="0dp"
+                    android:gravity="left|center"
+                    android:color="#ede2e2"
+                    android:textSize="10sp">
+                </TextView>
+
+                <TextView
+                    android:id="@+id/tvDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="17dp"
+                    android:layout_marginBottom="0dp"
+                    android:text=""
+                    android:textSize="12sp">
+
+                </TextView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llSumma"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    android:layout_marginLeft="5dp"
+                    android:text="@string/item_title_summa"
+                    android:gravity="left|center"
+                    android:color="#d2c2c2"
+                    android:textSize="10sp">
+                </TextView>
+
+                <TextView
+                    android:id="@+id/tvSumma"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center|right"
+                    android:textStyle="bold"
+                    android:text=""
+                    android:textSize="12sp">
+
+                </TextView>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

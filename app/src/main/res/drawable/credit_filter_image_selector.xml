@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <!-- Палец нажимает на пункт, но пункт ещё не активирован -->
+<!--  <item android:state_pressed="true"-->
+<!--      android:state_activated="false"-->
+<!--    android:drawable="@drawable/plus" />-->
+
+<!--  <item android:state_pressed="true"-->
+<!--      android:state_activated="true"-->
+<!--      android:drawable="@drawable/icon_toolbar_micro" />-->
+
+  <!-- Пункт активирован.  В режиме SINGLE_CHOICE_MODE пункт подсвечивается -->
+  <item android:state_activated="true"
+      android:drawable="@drawable/img_checkmark" />
+
+  <!-- По умолчанию -->
+  <item android:drawable="@drawable/transparent" />
+</selector>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:orientation="vertical"
+    android:padding="5dp"
+    android:layout_margin="15dp"
+    android:background="@drawable/credit_filter_selector"
+    >
+
+    <TextView
+        android:id="@+id/creditFilterName1TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_toStartOf="@+id/creditFilterImageView"
+        android:textColor="@color/diagram_filter_done_button_color"
+        android:textStyle="bold"
+        android:textSize="20sp">
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/creditFilterName2TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/creditFilterImageView"
+        android:layout_below="@+id/creditFilterName1TextView"
+        android:layout_margin="5dp"
+        android:textColor="@color/diagram_filter_done_button_color"
+        android:textSize="10sp">
+    </TextView>
+
+    <ImageView
+        android:id="@+id/creditFilterImageView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_margin="5dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:textColor="@color/diagram_filter_done_button_color"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:src="@drawable/credit_filter_image_selector"
+        >
+
+    </ImageView>
+
+</RelativeLayout>

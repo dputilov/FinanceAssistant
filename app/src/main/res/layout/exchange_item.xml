@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:id="@+id/item_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="10dp"
+    android:layout_marginStart="10dp"
+    android:animateLayoutChanges="true"
+    android:padding="3dp"
+    android:layout_margin="5dp"
+    android:background="@drawable/item_exchange"
+    >
+
+    <CheckBox
+        android:id="@+id/processCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="-5dp"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/processCheckBox"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/color_text"
+        tools:text="Платеж по кредиту"
+        />
+
+    <TextView
+        android:id="@+id/nameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/titleTextView"
+        android:layout_toEndOf="@+id/processCheckBox"
+        android:layout_alignTop="@+id/processCheckBox"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/color_text"
+        tools:text="Ипотека №1 от 01.01.001"
+        />
+
+    <TextView
+        android:id="@+id/dateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/titleTextView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp"
+        android:textColor="@color/color_text_default"
+        android:textSize="12sp"
+        tools:text="01.01.001"
+        />
+
+    <TextView
+        android:id="@+id/summaTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/processCheckBox"
+        android:layout_below="@+id/nameTextView"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/color_text"
+        android:textSize="25sp"
+        tools:text="1 500 000.00"
+        />
+
+    <TextView
+        android:id="@+id/typeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/summaTextView"
+        android:layout_alignStart="@+id/titleTextView"
+        android:layout_marginBottom="5dp"
+        tools:text="Комметарий"
+        />
+
+    <TextView
+        android:id="@+id/statusTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/typeTextView"
+        android:layout_toEndOf="@+id/typeTextView"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="5dp"
+        tools:text="UPDATE"
+        />
+
+</RelativeLayout>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <application
+        android:name=".app.FinanceAssistantApp"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:logo="@drawable/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:screenOrientation="portrait"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".main_window.FinanceManager"
+            android:configChanges="orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".credit.CreditItemActivity"
+            android:parentActivityName=".credit.CreditItemActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".payment.PaymentActivity"
+            android:parentActivityName=".payment.PaymentActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".graphic.GraphicListActivity"
+            android:parentActivityName=".graphic.GraphicListActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".graphic.GraphicItemActivity"
+            android:parentActivityName=".graphic.GraphicItemActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".task.TaskItemActivity"
+            android:parentActivityName=".main_window.FinanceManager"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan|stateAlwaysVisible" />
+        <activity
+            android:name=".flatPayment.FlatPaymentListActivity"
+            android:parentActivityName=".main_window.FinanceManager"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".flatPayment.FlatPaymentActivity"
+            android:parentActivityName=".flatPayment.FlatPaymentListActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".flat.FlatActivity"
+            android:configChanges="orientation"
+            android:parentActivityName=".main_window.FinanceManager"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:configChanges="orientation"
+            android:parentActivityName=".main_window.FinanceManager"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".diagram.CreditDiagramActivity"
+            android:configChanges="orientation"
+            android:parentActivityName=".diagram.CreditDiagramActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".exchange.ExchangeActivity"
+            android:configChanges="orientation"
+            android:parentActivityName=".main_window.FinanceManager"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <service
+            android:name=".services.TaskService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+    </application>
+
+</manifest>

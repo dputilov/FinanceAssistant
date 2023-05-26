@@ -1,0 +1,45 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:yourapp="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/exchange_action_load_all"
+        android:title="OK"
+        android:icon="@drawable/add_all"
+        yourapp:showAsAction="always" />
+
+    <item
+        android:title="sub"
+        android:icon="@drawable/submenu"
+        yourapp:showAsAction="always">
+        <menu xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:yourapp="http://schemas.android.com/apk/res-auto">
+
+            <item
+                android:id="@+id/exchange_action_load_credits"
+                android:title="@string/exchange_action_load_credits"
+                yourapp:showAsAction="ifRoom" />
+
+            <item
+                android:id="@+id/exchange_action_load_payments"
+                android:title="@string/exchange_action_load_payments"
+                yourapp:showAsAction="always" />
+
+            <item
+                android:id="@+id/exchange_action_load_graphics"
+                android:title="@string/exchange_action_load_graphics"
+                yourapp:showAsAction="always" />
+
+            <item
+                android:id="@+id/exchange_action_load_flats"
+                android:title="@string/exchange_action_load_flats"
+                yourapp:showAsAction="always" />
+
+            <item
+                android:id="@+id/exchange_action_load_flat_payments"
+                android:title="@string/exchange_action_load_flat_payments"
+                yourapp:showAsAction="always" />
+        </menu>
+    </item>
+
+
+</menu>
