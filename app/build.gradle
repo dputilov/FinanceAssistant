@@ -62,9 +62,16 @@ dependencies {
   implementation fileTree(include: ['*.jar'], dir: 'libs')
   //implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8"
 
+  // Constraint layout
   implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
+
+  // Recycler view
   implementation 'androidx.recyclerview:recyclerview:1.1.0'
+
+  // Preference
   implementation "androidx.preference:preference-ktx:1.1.0"
+
+  // Security
   implementation "androidx.security:security-crypto:1.0.0-rc01"
 
   //====
