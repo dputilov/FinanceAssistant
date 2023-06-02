@@ -4,8 +4,14 @@ import com.google.gson.annotations.SerializedName
 import java.util.Date
 
 class SourceImage(
+    @SerializedName("PictureId")
+    var pictureId: String = "",
+
+    @SerializedName("SourceUrl")
+    var sourceUrl: String = "",
+
     @SerializedName("Path")
-    var path : String = "",
+    var path: String = "",
 
     @SerializedName("FileName")
     var filename : String = "",
@@ -18,4 +24,5 @@ class SourceImage(
 
     @SerializedName("Size")
     var size: Long = 0L
+
 )

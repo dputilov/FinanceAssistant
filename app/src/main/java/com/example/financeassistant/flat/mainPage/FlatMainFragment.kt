@@ -2,6 +2,7 @@ package com.example.financeassistant.flat.mainPage
 
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.R.attr.data
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -10,6 +11,9 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore.Images
+import android.provider.MediaStore.Video.Media
 import android.speech.RecognizerIntent
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,6 +21,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.core.app.ActivityCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.example.financeassistant.R
@@ -24,19 +29,23 @@ import com.example.financeassistant.base.BaseFragment
 import com.example.financeassistant.classes.ARGUMENT_PAGE_NUMBER
 import com.example.financeassistant.classes.Flat
 import com.example.financeassistant.classes.HomeType
-import com.example.financeassistant.database.DB
+import com.example.financeassistant.classes.SourceImage
 import com.example.financeassistant.databinding.FlatMainFragmentBinding
 import com.example.financeassistant.flat.CreditListAdapter
+import com.example.financeassistant.manager.DatabaseManager
 import com.example.financeassistant.utils.KeyboardUtils
 import com.example.financeassistant.utils.Navigator
 import com.example.financeassistant.utils.NavigatorResultCode
 import com.google.gson.Gson
+import com.squareup.picasso.Picasso
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
+import java.io.FileOutputStream
 import java.io.IOException
+import java.nio.channels.FileChannel
 
 /**
  * Created by dima on 08.11.2018.
@@ -112,7 +121,7 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
 
     private fun bindViewModel() {
         viewModel.picture.observe(viewLifecycleOwner, Observer { picture ->
-            setPicture(picture)
+            updatePicture(picture)
         })
     }
 
@@ -146,11 +155,7 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
 
             if (flat_id > 0) {
 
-                val db = DB(activity)
-                db.open()
-
-                flat = db.getFlat(flat_id)
-                db.close()
+                flat = DatabaseManager.instance.getFlatById(flat_id)
 
                 flat?.also { flat ->
                     binding.etFlatName.setText(flat.name)
@@ -169,7 +174,7 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
                     binding.cbFinish.isChecked = flat.finish
 
                     try {
-                        setPicture(flat.foto)
+                        updatePicture(flat.foto)
 //                        if (flat.foto != null) {
 //                            setPicture(flat.foto)
 //                        } else {
@@ -202,7 +207,7 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
     }
 
 
-    fun setPicture(picture: ByteArray?) {
+    fun updatePicture(picture: ByteArray?) {
         if (picture != null) {
             val imageStream = ByteArrayInputStream(picture)
             val bitmap = BitmapFactory.decodeStream(imageStream)
@@ -210,6 +215,36 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
             binding.imgFoto.setImageBitmap(bitmap)
         } else {
             binding.imgFoto.setImageDrawable(null)
+        }
+    }
+
+    private fun updatePicture() {
+        flat?.sourceImage?.sourceUrl?.let { sourceUrl ->
+//            Glide.with(this)
+//                .asBitmap()
+//                .load(sourceUrl)
+//                .into(binding.imgFoto)
+
+            //val url = getPictureURL(flat_id)
+
+//            Picasso.get()
+//                .load(sourceUrl)
+//                //.load("http://94.181.95.17:9000/BaseOfJobs/hs/api/Flats/${flat?.uid}/Photo")
+//                .placeholder(R.mipmap.ic_launcher_round)
+//                .error(R.drawable.calendar)
+//                .centerInside()
+//                .fit()
+//                .into(binding.imgFoto)
+
+            val file = File(sourceUrl)
+            val picture = BitmapFactory.decodeFile(file.absolutePath)
+
+            if (picture != null) {
+                binding.imgFoto.setImageBitmap(picture)
+            } else {
+                binding.imgFoto.setImageDrawable(null)
+            }
+
         }
     }
 
@@ -350,15 +385,26 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
                         activity?.also { activity ->
                             bitmap = decodeSampledBitmapFromUri(activity, selectedImage, 100, 100)
                         }
+
+                        val realPath = getRealPathFromURI(selectedImage)
+
+                        val storedFile = copyFile(File(realPath))
+
+                        if (storedFile != null) {
+                            flat?.sourceImage = SourceImage(sourceUrl = storedFile.absolutePath)
+                            updatePicture()
+                        }
+
                     } catch (e: Exception) {
                         Log.d("DMS_CREDIT", "BITMAP ERROR ${e.message}")
 
                     }
-                    binding.imgFoto.setImageBitmap(bitmap)
+
+                    //binding.imgFoto.setImageBitmap(bitmap)
 
                     // TODO Just for test
                     flat?.also { flat ->
-                        viewModel.uploadPicture(flat.uid, selectedImage)
+                        //viewModel.uploadPicture(flat.uid, selectedImage)
                     }
                     //
 
@@ -370,6 +416,19 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
+    private fun getRealPathFromURI(contentUri: Uri): String? {
+        return activity?.let { activity ->
+            val projection = arrayOf(Media.DATA)
+            val cursor = activity.contentResolver.query(contentUri, projection, null, null, null)
+            if (cursor != null) {
+                val columnIndex = cursor.getColumnIndexOrThrow(Images.Media.DATA)
+                cursor.moveToFirst()
+                cursor.getString(columnIndex)
+            } else {
+                null
+            }
+        }
+    }
 
    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight : Int) : Int {
         // Raw height and width of image
@@ -446,5 +505,54 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
         activity?.let {
             KeyboardUtils.hideKeyboard(it, it.currentFocus)
         }
+    }
+
+    private fun copyFile(sourceFile: File) : File? {
+
+        if (!sourceFile.exists()) {
+            return null
+        }
+
+        val createDir = File(getNewImageFilePath() + File.separator)
+
+        if(!createDir.exists()) {
+            createDir.mkdir();
+        }
+
+        val imagePath = createDir.absolutePath + sourceFile.name
+
+        val destFile = File(imagePath)
+        if (!destFile.exists()) {
+            try {
+                destFile.createNewFile()
+            } catch (e: IOException) {
+                // TODO Auto-generated catch block
+                e.printStackTrace()
+            }
+        }
+        var source: FileChannel? = null
+        //var destination: FileChannel? = null
+
+        context?.let { context ->
+            val inputStream = context.contentResolver.openInputStream(sourceFile.toUri())
+
+            source = FileInputStream(sourceFile).channel
+            var destination = FileOutputStream(destFile)
+            if (destination != null && source != null) {
+                //destination.transferFrom(source, 0, source.size())
+
+                destination.write(inputStream?.readBytes())
+            }
+            source?.close()
+            destination?.close()
+
+        }
+
+        return destFile
+    }
+
+    private fun getNewImageFilePath(): String {
+        return Environment.getExternalStorageDirectory().absolutePath+"/sharedResources/"
+        //return context?.getExternalFilesDir(null)?.absolutePath ?: ""
     }
 }

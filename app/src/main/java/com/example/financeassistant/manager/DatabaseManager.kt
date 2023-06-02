@@ -237,6 +237,21 @@ class DatabaseManager {
         return result
     }
 
+    fun getFlatById(flat_id: Int): Flat? {
+        var result : Flat? = null
+        context?.also { context ->
+
+            val db = DB(context)
+            db.open()
+
+            result = db.getFlat(flat_id)
+
+            db.close()
+        }
+
+        return result
+    }
+
     fun getFlatPaymentByUid(flatPayment: FlatPayment): FlatPayment? {
         var result : FlatPayment? = null
         context?.also { context ->
