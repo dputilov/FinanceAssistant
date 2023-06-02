@@ -33,6 +33,7 @@ import com.example.financeassistant.classes.SourceImage
 import com.example.financeassistant.databinding.FlatMainFragmentBinding
 import com.example.financeassistant.flat.CreditListAdapter
 import com.example.financeassistant.manager.DatabaseManager
+import com.example.financeassistant.manager.FileManager
 import com.example.financeassistant.utils.KeyboardUtils
 import com.example.financeassistant.utils.Navigator
 import com.example.financeassistant.utils.NavigatorResultCode
@@ -174,29 +175,8 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
                     binding.cbFinish.isChecked = flat.finish
 
                     try {
-                        updatePicture(flat.foto)
-//                        if (flat.foto != null) {
-//                            setPicture(flat.foto)
-//                        } else {
-//                            imgFoto.setImageDrawable(null)
-
-//                            val url = getPictureURL(flat_id)
-//
-//
-//                            Glide.with(imgFoto)
-//                                .asBitmap()
-//                                .load(url)
-//                                .into(imgFoto)
-////                                .into(object : SimpleTarget<Bitmap>() {
-////                                    override fun onResourceReady(
-////                                        resource: Bitmap,
-////                                        transition: Transition<in Bitmap>?
-////                                    ) {
-////                                        shareImage(listOf(resource))
-////                                    }
-////                                })
-
-                    //    }
+                        updatePicture()
+                        //updatePicture(flat.foto)
                     } catch (e: Throwable) {
                         Log.d("DMS_CREDIT", "error load foto $e")
                     }
@@ -220,30 +200,17 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
 
     private fun updatePicture() {
         flat?.sourceImage?.sourceUrl?.let { sourceUrl ->
-//            Glide.with(this)
-//                .asBitmap()
-//                .load(sourceUrl)
-//                .into(binding.imgFoto)
 
             //val url = getPictureURL(flat_id)
 
-//            Picasso.get()
-//                .load(sourceUrl)
-//                //.load("http://94.181.95.17:9000/BaseOfJobs/hs/api/Flats/${flat?.uid}/Photo")
-//                .placeholder(R.mipmap.ic_launcher_round)
-//                .error(R.drawable.calendar)
-//                .centerInside()
-//                .fit()
-//                .into(binding.imgFoto)
-
-            val file = File(sourceUrl)
-            val picture = BitmapFactory.decodeFile(file.absolutePath)
-
-            if (picture != null) {
-                binding.imgFoto.setImageBitmap(picture)
-            } else {
-                binding.imgFoto.setImageDrawable(null)
-            }
+            Picasso.get()
+                .load(File(sourceUrl))
+                //.load("http://94.181.95.17:9000/BaseOfJobs/hs/api/Flats/${flat?.uid}/Photo")
+                .placeholder(R.drawable.plus_grey)
+                //.error(R.drawable.e)
+                .centerInside()
+                .fit()
+                .into(binding.imgFoto)
 
         }
     }
@@ -383,16 +350,13 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
                     try {
                         //bitmap = MediaStore.Images.Media.getBitmap(activity.contentResolver, selectedImage)
                         activity?.also { activity ->
-                            bitmap = decodeSampledBitmapFromUri(activity, selectedImage, 100, 100)
+                            bitmap = FileManager.instance.decodeBitmapFromUri(selectedImage, 100, 100)
+                            // TODO create small icon and save it in 'foto' param
                         }
 
-                        val realPath = getRealPathFromURI(selectedImage)
-
-                        val storedFile = copyFile(File(realPath))
-
-                        if (storedFile != null) {
-                            flat?.sourceImage = SourceImage(sourceUrl = storedFile.absolutePath)
-                            updatePicture()
+                        FileManager.instance.copyFile(selectedImage)?.also { storedFile ->
+                                flat?.sourceImage = SourceImage(sourceUrl = storedFile.absolutePath)
+                                updatePicture()
                         }
 
                     } catch (e: Exception) {
@@ -416,143 +380,10 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private fun getRealPathFromURI(contentUri: Uri): String? {
-        return activity?.let { activity ->
-            val projection = arrayOf(Media.DATA)
-            val cursor = activity.contentResolver.query(contentUri, projection, null, null, null)
-            if (cursor != null) {
-                val columnIndex = cursor.getColumnIndexOrThrow(Images.Media.DATA)
-                cursor.moveToFirst()
-                cursor.getString(columnIndex)
-            } else {
-                null
-            }
-        }
-    }
-
-   private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight : Int) : Int {
-        // Raw height and width of image
-        val height = options.outHeight
-        val width = options.outWidth
-        var inSampleSize = 1
-
-        if (height > reqHeight || width > reqWidth) {
-
-            val halfHeight : Int = height / 2
-            val halfWidth : Int = width / 2
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) >= reqHeight
-                    && (halfWidth / inSampleSize) >= reqWidth) {
-                inSampleSize *= 2
-            }
-        }
-
-        return inSampleSize
-    }
-
-    fun getByteArrayFromFile(file: File): ByteArray? {
-        var fis: FileInputStream? = null
-        try {
-            fis = FileInputStream(file.path)
-            val bos = ByteArrayOutputStream()
-            val b = ByteArray(1024)
-            var readNum: Int
-            while (fis.read(b).also { readNum = it } != -1) {
-                bos.write(b, 0, readNum)
-            }
-            return bos.toByteArray()
-        } catch (e: java.lang.Exception) {
-            Log.d("mylog", e.toString())
-        }
-        return null
-    }
-
-    private fun decodeSampledBitmapFromUri(context: Context, imageUri: Uri, reqWidth: Int, reqHeight: Int) : Bitmap? {
-            var bitmap : Bitmap? = null
-            try {
-                // Get input stream of the image
-                val options = BitmapFactory.Options()
-                var iStream = context.contentResolver.openInputStream(imageUri)
-
-                // First decode with inJustDecodeBounds=true to check dimensions
-                options.inJustDecodeBounds = true
-                BitmapFactory.decodeStream(iStream, null, options)
-                if (iStream != null) {
-                    iStream.close()
-                }
-                iStream = context.contentResolver.openInputStream(imageUri)
-
-                // Calculate inSampleSize
-                options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight)
-
-                // Decode bitmap with inSampleSize set
-                options.inJustDecodeBounds = false
-                bitmap = BitmapFactory.decodeStream(iStream, null, options)
-                if (iStream != null) {
-                    iStream.close()
-                }
-            } catch (e: FileNotFoundException) {
-                e.printStackTrace()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-            return bitmap
-    }
-
     private fun hideKeyboard() {
         activity?.let {
             KeyboardUtils.hideKeyboard(it, it.currentFocus)
         }
     }
 
-    private fun copyFile(sourceFile: File) : File? {
-
-        if (!sourceFile.exists()) {
-            return null
-        }
-
-        val createDir = File(getNewImageFilePath() + File.separator)
-
-        if(!createDir.exists()) {
-            createDir.mkdir();
-        }
-
-        val imagePath = createDir.absolutePath + sourceFile.name
-
-        val destFile = File(imagePath)
-        if (!destFile.exists()) {
-            try {
-                destFile.createNewFile()
-            } catch (e: IOException) {
-                // TODO Auto-generated catch block
-                e.printStackTrace()
-            }
-        }
-        var source: FileChannel? = null
-        //var destination: FileChannel? = null
-
-        context?.let { context ->
-            val inputStream = context.contentResolver.openInputStream(sourceFile.toUri())
-
-            source = FileInputStream(sourceFile).channel
-            var destination = FileOutputStream(destFile)
-            if (destination != null && source != null) {
-                //destination.transferFrom(source, 0, source.size())
-
-                destination.write(inputStream?.readBytes())
-            }
-            source?.close()
-            destination?.close()
-
-        }
-
-        return destFile
-    }
-
-    private fun getNewImageFilePath(): String {
-        return Environment.getExternalStorageDirectory().absolutePath+"/sharedResources/"
-        //return context?.getExternalFilesDir(null)?.absolutePath ?: ""
-    }
 }

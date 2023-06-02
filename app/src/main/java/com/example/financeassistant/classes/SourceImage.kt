@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName
 import java.util.Date
 
 class SourceImage(
-    @SerializedName("PictureId")
-    var pictureId: String = "",
+    @SerializedName("PictureUid")
+    var pictureUid: String = "",
 
     @SerializedName("SourceUrl")
     var sourceUrl: String = "",

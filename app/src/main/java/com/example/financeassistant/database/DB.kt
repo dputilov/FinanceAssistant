@@ -23,7 +23,7 @@ class DB {
         const val UNDEFINED_ID = -1
 
         private val DB_NAME = "DMS_TASK"
-        private val DB_VERSION = 21
+        private val DB_VERSION = 22
 
         // == Таблица Квартиры операции ==
         private val DB_FLAT_ACCOUNT_TABLE = "FLAT_ACCOUNT"
@@ -116,6 +116,7 @@ class DB {
         val CL_FLAT_DAY_ARENDA = "day_arenda"
         val CL_FLAT_FINISH = "finish"
         val CL_FLAT_TYPE = "type"
+        val CL_FLAT_AVATAR = "avatar"
 
         private val DB_FLAT_CREATE = "create table " + DB_FLAT_TABLE + "(" +
                 "$CL_UID $TYPE_CL_UID," +
@@ -136,6 +137,7 @@ class DB {
                 CL_FLAT_SUMMA_ARENDA + " double," +
                 CL_FLAT_DAY_ARENDA + " tinyint(1)," +
                 CL_FLAT_PARAM + " text," +
+                CL_FLAT_AVATAR + " text," +
                 CL_FLAT_FOTO + " blob" +
                 ");"
 
@@ -904,6 +906,7 @@ class DB {
                     flat.day_arenda = c.getInt(c.getColumnIndex(CL_FLAT_DAY_ARENDA))
                     flat.summa_arenda = c.getInt(c.getColumnIndex(CL_FLAT_SUMMA_ARENDA)).toDouble()
 
+                    flat.sourceImage = SourceImage(sourceUrl = c.getString(c.getColumnIndex(CL_FLAT_AVATAR)) ?: "")
                 } while (c.moveToNext())
             }
             c.close()
@@ -942,6 +945,7 @@ class DB {
                     flat.isArenda = c.getInt(c.getColumnIndex(CL_FLAT_ISARENDA)).toBoolean()
                     flat.day_arenda = c.getInt(c.getColumnIndex(CL_FLAT_DAY_ARENDA))
                     flat.summa_arenda = c.getInt(c.getColumnIndex(CL_FLAT_SUMMA_ARENDA)).toDouble()
+                    flat.sourceImage = SourceImage(sourceUrl = c.getString(c.getColumnIndex(CL_FLAT_AVATAR)) ?: "")
 
                 } while (c.moveToNext())
             }
@@ -974,6 +978,8 @@ class DB {
         cv.put(CL_FLAT_DAY_ARENDA, pFlat.day_arenda)
         cv.put(CL_FLAT_SUMMA_ARENDA, pFlat.summa_arenda)
 
+        cv.put(CL_FLAT_AVATAR, pFlat.sourceImage?.sourceUrl ?: "")
+
         //cv.put(COLUMN_IMG, img);
         mDB!!.insert(DB_FLAT_TABLE, null, cv)
     }
@@ -999,7 +1005,7 @@ class DB {
         cv.put(CL_FLAT_ISARENDA, pFlat.isArenda)
         cv.put(CL_FLAT_DAY_ARENDA, pFlat.day_arenda)
         cv.put(CL_FLAT_SUMMA_ARENDA, pFlat.summa_arenda)
-
+        cv.put(CL_FLAT_AVATAR, pFlat.sourceImage?.sourceUrl ?: "")
 
         //cv.put(COLUMN_IMG, img);
         mDB!!.update(DB_FLAT_TABLE, cv, "_id = ?", arrayOf(pFlat.id.toString()))
@@ -1065,6 +1071,10 @@ class DB {
 
                     val foto = c.getBlob(c.getColumnIndex(CL_FLAT_FOTO))
 
+                    val avatar = c.getString(c.getColumnIndex(CL_FLAT_AVATAR)) ?: ""
+                    val sourceImage = SourceImage(sourceUrl = avatar)
+
+
                     val flat = Flat(
                         id = c.getInt(c.getColumnIndex(DB.CL_ID)),
                         name = c.getString(c.getColumnIndex(DB.CL_FLAT_NAME)),
@@ -1077,7 +1087,8 @@ class DB {
                         summa_arenda = c.getDouble(c.getColumnIndex(DB.CL_FLAT_SUMMA_ARENDA)),
                         isCounter = (c.getInt(c.getColumnIndex(DB.CL_FLAT_ISCOUNTER)).toBoolean()),
                         finish = (c.getInt(c.getColumnIndex(DB.CL_FLAT_FINISH)).toBoolean()),
-                        foto = foto
+                        foto = foto,
+                        sourceImage = sourceImage
                     )
 
                     listData.add(flat)
@@ -1927,6 +1938,10 @@ class DB {
 //
 //            }
 //
+            if (newVersion == 22) {
+                db.execSQL("alter table $DB_FLAT_TABLE add column $CL_FLAT_AVATAR text;")
+
+            }
         }
     }
 

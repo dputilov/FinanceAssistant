@@ -300,13 +300,19 @@ class FlatFragment : BaseFragment<FlatFragmentBinding>() {
         val cur_flat = Flat()
 
         // Main fragment
-        (pagerAdapter?.getItem(0) as FlatMainFragment)?.externalBinding?.let { flatMainFragmentView ->
+        (pagerAdapter?.getItem(0) as FlatMainFragment)?.let { flatMainFragment ->
+
+            val flatMainFragmentView = flatMainFragment.externalBinding
         //fragmentManager.findFragmentByTag("flatMainFragment")?.view?.let { flatMainFragmentView ->
 
             cur_flat.name = flatMainFragmentView.etFlatName.text.toString()
             cur_flat.adres = flatMainFragmentView.etAdres.text.toString()
             cur_flat.param = flatMainFragmentView.etParam.text.toString()
 
+
+            flatMainFragment.flat?.sourceImage?.also {
+                cur_flat.sourceImage = it
+            }
 
             // TODO : переделать на нормальный возврат ИД кредита
             val creditListAdapter = CreditListAdapter(requireContext())
