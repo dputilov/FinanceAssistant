@@ -15,6 +15,7 @@ import com.example.financeassistant.classes.FlatPayment
 import com.example.financeassistant.classes.Payment
 import com.example.financeassistant.classes.Task
 import com.example.financeassistant.database.DB
+import com.example.financeassistant.room.database.toEntity
 import com.example.financeassistant.utils.formatDate
 
 class DatabaseManager {
@@ -154,7 +155,6 @@ class DatabaseManager {
             val db = DB(context)
             db.open()
 
-
             val flat = db.getFlatByUid(flatPayment.getFlatUid())
 
             if (flat != null) {
@@ -162,6 +162,8 @@ class DatabaseManager {
                 if (checkPayment == null) {
                     flatPayment.flat = flat
                     db.flatAccount_Add(flatPayment)
+
+                    RoomDatabaseManager.instance.db.flatAccountDao().insertAll(listOf(flatPayment.toEntity()))
 
                     /// Auto-close task
                     val t = db.autoCloseTask(flatPayment)

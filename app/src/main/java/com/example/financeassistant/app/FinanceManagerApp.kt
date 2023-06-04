@@ -13,6 +13,7 @@ import com.example.financeassistant.injection.component.DaggerAppComponent
 import com.example.financeassistant.injection.module.AppModule
 import com.example.financeassistant.manager.DatabaseManager
 import com.example.financeassistant.manager.FileManager
+import com.example.financeassistant.manager.RoomDatabaseManager
 import com.example.financeassistant.manager.SettingsManager
 import com.example.financeassistant.notification.PushNotificationManager
 import com.example.financeassistant.services.TaskService
@@ -47,6 +48,8 @@ class FinanceAssistantApp : MultiDexApplication(){
         SettingsManager.instance.initManager(this)
 
         DatabaseManager.instance.initManager(this)
+
+        RoomDatabaseManager.instance.initManager(this)
 
         FileManager.instance.initManager(this)
     }

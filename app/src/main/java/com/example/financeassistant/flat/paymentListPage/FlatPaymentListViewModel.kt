@@ -11,6 +11,11 @@ import com.example.financeassistant.classes.FlatPaymentOperationType.RENT
 import com.example.financeassistant.classes.FlatPaymentType.Outlay
 import com.example.financeassistant.classes.FlatPaymentType.Profit
 import com.example.financeassistant.classes.Flat
+import com.example.financeassistant.classes.FlatPaymentType
+import com.example.financeassistant.database.DB
+import com.example.financeassistant.manager.RoomDatabaseManager
+import com.example.financeassistant.room.database.toFlatPayment
+import com.example.financeassistant.room.entity.FlatAccountEntity
 import com.example.financeassistant.utils.SingleLiveEvent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -61,6 +66,41 @@ class FlatPaymentListViewModel(application: Application): AndroidViewModel(appli
     }
 
     fun loadFlatPaymentList(){
+
+        flat?.also { flat ->
+
+            getFlatPaymentSubscription?.dispose()
+
+            getFlatPaymentSubscription = RoomDatabaseManager.instance.db.flatAccountDao().getAllByFlatUid(listOf(flat.uid))
+            //getFlatPaymentSubscription = RoomDatabaseManager.instance.db.flatAccountDao().getAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { onGetDataStart() }
+                .doOnComplete { onGetDataStop() }
+                .subscribe(
+                    { listData: List<FlatAccountEntity> -> onGetEntitiesSuccess(listData) },
+                    { error: Throwable -> onGetDatasError(error) }
+                )
+        }
+
+    }
+
+    fun onGetEntitiesSuccess(flatAccountEntityList: List<FlatAccountEntity>) {
+
+        val listData = mutableListOf<FlatPayment>()
+
+        flatAccountEntityList.forEach {
+            listData.add(it.toFlatPayment())
+        }
+
+        flatPaymentList.value = listData.sortedByDescending { it.date }
+
+        onGetDataStop()
+    }
+
+
+
+    fun loadFlatPaymentList_old(){
 
         flat?.also { flat ->
 

@@ -1077,6 +1077,7 @@ class DB {
 
                     val flat = Flat(
                         id = c.getInt(c.getColumnIndex(DB.CL_ID)),
+                        uid = c.getString(c.getColumnIndex(DB.CL_UID)),
                         name = c.getString(c.getColumnIndex(DB.CL_FLAT_NAME)),
                         adres = c.getString(c.getColumnIndex(DB.CL_FLAT_ADRES)),
                         param = c.getString(c.getColumnIndex(DB.CL_FLAT_PARAM)),
