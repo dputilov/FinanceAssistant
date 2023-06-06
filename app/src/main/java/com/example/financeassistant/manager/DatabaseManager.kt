@@ -2,9 +2,6 @@ package com.example.financeassistant.manager
 
 import android.content.Context
 import android.content.Intent
-import android.text.format.DateUtils
-import android.widget.Toast
-import com.example.financeassistant.app.FinanceAssistantApp
 import com.example.financeassistant.classes.BROADCAST_ACTION
 import com.example.financeassistant.classes.BROADCAST_ACTION_TYPE
 import com.example.financeassistant.classes.BROADCAST_SEND_FROM
@@ -13,10 +10,8 @@ import com.example.financeassistant.classes.Credit
 import com.example.financeassistant.classes.Flat
 import com.example.financeassistant.classes.FlatPayment
 import com.example.financeassistant.classes.Payment
-import com.example.financeassistant.classes.Task
 import com.example.financeassistant.database.DB
 import com.example.financeassistant.room.database.toEntity
-import com.example.financeassistant.utils.formatDate
 
 class DatabaseManager {
 
@@ -163,7 +158,7 @@ class DatabaseManager {
                     flatPayment.flat = flat
                     db.flatAccount_Add(flatPayment)
 
-                    RoomDatabaseManager.instance.db.flatAccountDao().insertAll(listOf(flatPayment.toEntity()))
+                    RoomDatabaseManager.instance.database.flatAccountDao().insert(listOf(flatPayment.toEntity()))
 
                     /// Auto-close task
                     val t = db.autoCloseTask(flatPayment)

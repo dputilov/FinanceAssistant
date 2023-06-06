@@ -2,18 +2,13 @@ package com.example.financeassistant.flat.mainPage
 
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-import android.R.attr.data
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore.Images
-import android.provider.MediaStore.Video.Media
 import android.speech.RecognizerIntent
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,7 +16,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.core.app.ActivityCompat
-import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.example.financeassistant.R
@@ -37,16 +31,12 @@ import com.example.financeassistant.manager.FileManager
 import com.example.financeassistant.utils.KeyboardUtils
 import com.example.financeassistant.utils.Navigator
 import com.example.financeassistant.utils.NavigatorResultCode
+import com.example.financeassistant.utils.gone
+import com.example.financeassistant.utils.visible
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
-import java.nio.channels.FileChannel
 
 /**
  * Created by dima on 08.11.2018.
@@ -66,9 +56,9 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
     var listHomeType: List<HomeType> = HomeType.getHomeTypeList()
 
     private var creditListAdapter: CreditListAdapter? = null
-    private var flat_id: Int = -1
+    //private var flat_uid = ""
 
-    var flat: Flat? = null
+    //var flat: Flat? = null
 
     private val MICROPHONE_REQUEST_CODE = 121
     private val MICROPHONE_ADRES_REQUEST_CODE = 122
@@ -97,13 +87,11 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setParam()
+        setupAdapters()
 
-        loadData()
+        initData()
 
         setListeners()
-
-        updateUI()
 
         hideKeyboard()
 
@@ -121,30 +109,38 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
     }
 
     private fun bindViewModel() {
+        viewModel.currentFlat.observe(viewLifecycleOwner, Observer { currentFlat ->
+            updateUI(currentFlat)
+        })
+
         viewModel.picture.observe(viewLifecycleOwner, Observer { picture ->
             updatePicture(picture)
         })
     }
 
-    fun setParam() {
+    fun initData() {
         activity?.intent?.also { intent ->
             if (intent.hasExtra(Navigator.EXTRA_FLAT_KEY)) {
                 val taskGson = intent.getStringExtra(Navigator.EXTRA_FLAT_KEY)
                 val flat = Gson().fromJson(taskGson, Flat::class.java)
-                flat_id = flat.id
+                //flat_uid = flat.uid
+
+                viewModel.initInstance(flat)
             }
         }
     }
 
     fun setCurrentFlat(flat: Flat) {
-        if (this.flat_id != flat.id) {
-            this.flat_id = flat.id
-            loadData()
-        }
+
+        viewModel.setCurrentFlat(flat)
+
+//        if (this.flat_uid != flat.uid) {
+//            this.flat_uid = flat.uid
+//            loadData()
+//        }
     }
 
-    fun loadData() {
-
+    fun setupAdapters() {
         setTypeSpinnerAdapter()
 
         activity?.also { activity ->
@@ -153,39 +149,40 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
                 binding.spCredit.adapter = adapter.getAdapter()
                 val listData = adapter.listData
             }
-
-            if (flat_id > 0) {
-
-                flat = DatabaseManager.instance.getFlatById(flat_id)
-
-                flat?.also { flat ->
-                    binding.etFlatName.setText(flat.name)
-                    binding.etAdres.setText(flat.adres)
-                    binding.etParam.setText(flat.param)
-                    binding.etSumma.setText(flat.summa.toString())
-
-                    // выделяем элемент
-                    creditListAdapter?.listData?.let {
-                        val curpos = it.indexOf(flat.credit_id)
-                        binding.spCredit.setSelection(curpos)
-                    }
-
-                    setCurrentType(flat.type)
-
-                    binding.cbFinish.isChecked = flat.finish
-
-                    try {
-                        updatePicture()
-                        //updatePicture(flat.foto)
-                    } catch (e: Throwable) {
-                        Log.d("DMS_CREDIT", "error load foto $e")
-                    }
-
-                }
-            }
         }
     }
 
+    fun updateUI(flat: Flat) {
+        activity?.also { activity ->
+            flat?.also { flat ->
+                binding.etFlatName.setText(flat.name)
+                binding.etAdres.setText(flat.adres)
+                binding.etParam.setText(flat.param)
+                binding.etSumma.setText(flat.summa.toString())
+
+                // выделяем элемент
+                creditListAdapter?.listData?.let {
+                    val curpos = it.indexOf(flat.credit_id)
+                    binding.spCredit.setSelection(curpos)
+                }
+
+                setCurrentType(flat.type)
+
+                binding.cbFinish.isChecked = flat.isFinish
+
+                updatePicture(flat.sourceImage?.sourceUrl ?: "")
+            }
+        }
+
+        if (flat.type == HomeType.Automobile) {
+            binding.adresLayout.gone()
+            binding.etAdres.gone()
+        } else {
+            binding.adresLayout.visible()
+            binding.etAdres.visible()
+        }
+
+    }
 
     fun updatePicture(picture: ByteArray?) {
         if (picture != null) {
@@ -198,21 +195,15 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
         }
     }
 
-    private fun updatePicture() {
-        flat?.sourceImage?.sourceUrl?.let { sourceUrl ->
-
-            //val url = getPictureURL(flat_id)
-
-            Picasso.get()
-                .load(File(sourceUrl))
-                //.load("http://94.181.95.17:9000/BaseOfJobs/hs/api/Flats/${flat?.uid}/Photo")
-                .placeholder(R.drawable.plus_grey)
-                //.error(R.drawable.e)
-                .centerInside()
-                .fit()
-                .into(binding.imgFoto)
-
-        }
+    private fun updatePicture(sourceUrl: String) {
+         Picasso.get()
+            .load(File(sourceUrl))
+            //.load("http://94.181.95.17:9000/BaseOfJobs/hs/api/Flats/${flat?.uid}/Photo")
+            .placeholder(R.drawable.plus_grey)
+            //.error(R.drawable.e)
+            .centerInside()
+            .fit()
+            .into(binding.imgFoto)
     }
 
     fun setListeners() {
@@ -239,11 +230,7 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
         }
 
         binding.imgFoto.setOnLongClickListener { v ->
-            flat?.let {
-
-                viewModel.loadPicture(it.uid)
-
-            }
+            viewModel.loadPicture()
             true
         }
 
@@ -260,18 +247,6 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
                 //do something like displaying a message that he didn't allow the app to access gallery and you wont be able to let him select from gallery
             }
         }
-    }
-
-    fun updateUI() {
-        val listHomeTypes = HomeType.getHomeTypeList()
-        val type = listHomeTypes.get(binding.spType.selectedItemPosition)
-
-        binding.adresLayout.visibility =
-                if (type == HomeType.Automobile)
-                    View.GONE
-                else
-                    View.VISIBLE
-
     }
 
     private fun setCurrentType(curType: HomeType) {
@@ -355,8 +330,8 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
                         }
 
                         FileManager.instance.copyFile(selectedImage)?.also { storedFile ->
-                                flat?.sourceImage = SourceImage(sourceUrl = storedFile.absolutePath)
-                                updatePicture()
+                                val sourceImage = SourceImage(sourceUrl = storedFile.absolutePath)
+                                viewModel.updatePicture(sourceImage)
                         }
 
                     } catch (e: Exception) {
@@ -367,9 +342,7 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
                     //binding.imgFoto.setImageBitmap(bitmap)
 
                     // TODO Just for test
-                    flat?.also { flat ->
-                        //viewModel.uploadPicture(flat.uid, selectedImage)
-                    }
+                    viewModel.uploadPicture(selectedImage)
                     //
 
                 }

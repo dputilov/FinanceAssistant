@@ -32,7 +32,7 @@ class FinanceAssistantPagerAdapter constructor(fragmentManager : FragmentManager
                     it.setCurrentFlat(flat)
                 }
                 is FlatSettingsFragment -> {
-                    it.setCurrentFlat(flat)
+                    //it.setCurrentFlat(flat)
                 }
                 is FlatPaymentListFragment -> {
                     it.setCurrentFlat(flat)

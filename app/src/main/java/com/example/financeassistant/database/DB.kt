@@ -894,17 +894,17 @@ class DB {
                     flat.isCounter = c.getInt(c.getColumnIndex(CL_FLAT_ISCOUNTER)).toBoolean()
                     flat.isPay = c.getInt(c.getColumnIndex(CL_FLAT_ISPAY)).toBoolean()
                     flat.lic = c.getString(c.getColumnIndex(CL_FLAT_LICNUMBER))
-                    flat.day_beg = c.getInt(c.getColumnIndex(CL_FLAT_DAY_BEG))
-                    flat.day_end = c.getInt(c.getColumnIndex(CL_FLAT_DAY_END))
+                    flat.dayStart = c.getInt(c.getColumnIndex(CL_FLAT_DAY_BEG))
+                    flat.dayEnd = c.getInt(c.getColumnIndex(CL_FLAT_DAY_END))
                     flat.credit_id = c.getInt(c.getColumnIndex(CL_FLAT_CREDIT_ID))
                     flat.summa = c.getInt(c.getColumnIndex(CL_FLAT_SUMMA)).toDouble()
-                    flat.finish = c.getInt(c.getColumnIndex(CL_FLAT_FINISH)).toBoolean()
+                    flat.isFinish = c.getInt(c.getColumnIndex(CL_FLAT_FINISH)).toBoolean()
                     flat.type = HomeType.getById(c.getInt(c.getColumnIndex(CL_FLAT_TYPE)))
                     flat.foto = c.getBlob(c.getColumnIndex(CL_FLAT_FOTO))
 
                     flat.isArenda = c.getInt(c.getColumnIndex(CL_FLAT_ISARENDA)).toBoolean()
-                    flat.day_arenda = c.getInt(c.getColumnIndex(CL_FLAT_DAY_ARENDA))
-                    flat.summa_arenda = c.getInt(c.getColumnIndex(CL_FLAT_SUMMA_ARENDA)).toDouble()
+                    flat.dayArenda = c.getInt(c.getColumnIndex(CL_FLAT_DAY_ARENDA))
+                    flat.summaArenda = c.getInt(c.getColumnIndex(CL_FLAT_SUMMA_ARENDA)).toDouble()
 
                     flat.sourceImage = SourceImage(sourceUrl = c.getString(c.getColumnIndex(CL_FLAT_AVATAR)) ?: "")
                 } while (c.moveToNext())
@@ -934,17 +934,17 @@ class DB {
                     flat.isCounter = c.getInt(c.getColumnIndex(CL_FLAT_ISCOUNTER)).toBoolean()
                     flat.isPay = c.getInt(c.getColumnIndex(CL_FLAT_ISPAY)).toBoolean()
                     flat.lic = c.getString(c.getColumnIndex(CL_FLAT_LICNUMBER))
-                    flat.day_beg = c.getInt(c.getColumnIndex(CL_FLAT_DAY_BEG))
-                    flat.day_end = c.getInt(c.getColumnIndex(CL_FLAT_DAY_END))
+                    flat.dayStart = c.getInt(c.getColumnIndex(CL_FLAT_DAY_BEG))
+                    flat.dayEnd = c.getInt(c.getColumnIndex(CL_FLAT_DAY_END))
                     flat.credit_id = c.getInt(c.getColumnIndex(CL_FLAT_CREDIT_ID))
                     flat.summa = c.getInt(c.getColumnIndex(CL_FLAT_SUMMA)).toDouble()
-                    flat.finish = c.getInt(c.getColumnIndex(CL_FLAT_FINISH)).toBoolean()
+                    flat.isFinish = c.getInt(c.getColumnIndex(CL_FLAT_FINISH)).toBoolean()
                     flat.type = HomeType.getById(c.getInt(c.getColumnIndex(CL_FLAT_TYPE)))
                     flat.foto = c.getBlob(c.getColumnIndex(CL_FLAT_FOTO))
 
                     flat.isArenda = c.getInt(c.getColumnIndex(CL_FLAT_ISARENDA)).toBoolean()
-                    flat.day_arenda = c.getInt(c.getColumnIndex(CL_FLAT_DAY_ARENDA))
-                    flat.summa_arenda = c.getInt(c.getColumnIndex(CL_FLAT_SUMMA_ARENDA)).toDouble()
+                    flat.dayArenda = c.getInt(c.getColumnIndex(CL_FLAT_DAY_ARENDA))
+                    flat.summaArenda = c.getInt(c.getColumnIndex(CL_FLAT_SUMMA_ARENDA)).toDouble()
                     flat.sourceImage = SourceImage(sourceUrl = c.getString(c.getColumnIndex(CL_FLAT_AVATAR)) ?: "")
 
                 } while (c.moveToNext())
@@ -963,20 +963,20 @@ class DB {
         cv.put(CL_FLAT_NAME, pFlat.name)
         cv.put(CL_FLAT_ADRES, pFlat.adres)
         cv.put(CL_FLAT_ISCOUNTER, pFlat.isCounter)
-        cv.put(CL_FLAT_DAY_BEG, pFlat.day_beg)
-        cv.put(CL_FLAT_DAY_END, pFlat.day_end)
+        cv.put(CL_FLAT_DAY_BEG, pFlat.dayStart)
+        cv.put(CL_FLAT_DAY_END, pFlat.dayEnd)
         cv.put(CL_FLAT_ISPAY, pFlat.isPay)
         cv.put(CL_FLAT_LICNUMBER, pFlat.lic)
         cv.put(CL_FLAT_SUMMA, pFlat.summa)
         cv.put(CL_FLAT_CREDIT_ID, pFlat.credit_id)
         cv.put(CL_FLAT_TYPE, pFlat.type.type)
-        cv.put(CL_FLAT_FINISH, pFlat.finish)
+        cv.put(CL_FLAT_FINISH, pFlat.isFinish)
         cv.put(CL_FLAT_PARAM, pFlat.param)
         cv.put(CL_FLAT_FOTO, pFlat.foto)
 
         cv.put(CL_FLAT_ISARENDA, pFlat.isArenda)
-        cv.put(CL_FLAT_DAY_ARENDA, pFlat.day_arenda)
-        cv.put(CL_FLAT_SUMMA_ARENDA, pFlat.summa_arenda)
+        cv.put(CL_FLAT_DAY_ARENDA, pFlat.dayArenda)
+        cv.put(CL_FLAT_SUMMA_ARENDA, pFlat.summaArenda)
 
         cv.put(CL_FLAT_AVATAR, pFlat.sourceImage?.sourceUrl ?: "")
 
@@ -993,18 +993,18 @@ class DB {
         cv.put(CL_FLAT_ISCOUNTER, pFlat.isCounter)
         cv.put(CL_FLAT_ISPAY, pFlat.isPay)
         cv.put(CL_FLAT_LICNUMBER, pFlat.lic)
-        cv.put(CL_FLAT_DAY_BEG, pFlat.day_beg)
-        cv.put(CL_FLAT_DAY_END, pFlat.day_end)
+        cv.put(CL_FLAT_DAY_BEG, pFlat.dayStart)
+        cv.put(CL_FLAT_DAY_END, pFlat.dayEnd)
         cv.put(CL_FLAT_SUMMA, pFlat.summa)
         cv.put(CL_FLAT_CREDIT_ID, pFlat.credit_id)
         cv.put(CL_FLAT_TYPE, pFlat.type.type)
-        cv.put(CL_FLAT_FINISH, pFlat.finish)
+        cv.put(CL_FLAT_FINISH, pFlat.isFinish)
         cv.put(CL_FLAT_PARAM, pFlat.param)
         cv.put(CL_FLAT_FOTO, pFlat.foto)
 
         cv.put(CL_FLAT_ISARENDA, pFlat.isArenda)
-        cv.put(CL_FLAT_DAY_ARENDA, pFlat.day_arenda)
-        cv.put(CL_FLAT_SUMMA_ARENDA, pFlat.summa_arenda)
+        cv.put(CL_FLAT_DAY_ARENDA, pFlat.dayArenda)
+        cv.put(CL_FLAT_SUMMA_ARENDA, pFlat.summaArenda)
         cv.put(CL_FLAT_AVATAR, pFlat.sourceImage?.sourceUrl ?: "")
 
         //cv.put(COLUMN_IMG, img);
@@ -1085,9 +1085,9 @@ class DB {
                         credit_id = c.getInt(c.getColumnIndex(DB.CL_FLAT_CREDIT_ID)),
                         isPay = (c.getInt(c.getColumnIndex(DB.CL_FLAT_ISPAY)).toBoolean()),
                         isArenda = (c.getInt(c.getColumnIndex(DB.CL_FLAT_ISARENDA)).toBoolean()),
-                        summa_arenda = c.getDouble(c.getColumnIndex(DB.CL_FLAT_SUMMA_ARENDA)),
+                        summaArenda = c.getDouble(c.getColumnIndex(DB.CL_FLAT_SUMMA_ARENDA)),
                         isCounter = (c.getInt(c.getColumnIndex(DB.CL_FLAT_ISCOUNTER)).toBoolean()),
-                        finish = (c.getInt(c.getColumnIndex(DB.CL_FLAT_FINISH)).toBoolean()),
+                        isFinish = (c.getInt(c.getColumnIndex(DB.CL_FLAT_FINISH)).toBoolean()),
                         foto = foto,
                         sourceImage = sourceImage
                     )

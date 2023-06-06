@@ -25,7 +25,6 @@ import com.example.financeassistant.utils.visible
 import java.io.ByteArrayInputStream
 import android.widget.RelativeLayout
 import androidx.recyclerview.widget.DiffUtil
-import com.example.financeassistant.databinding.ItemTaskBinding
 import com.example.financeassistant.databinding.SideMenuGroupBinding
 import com.example.financeassistant.databinding.SideMenuItemBinding
 
@@ -454,7 +453,7 @@ class SideMenuFlatItemViewHolder constructor(binding: SideMenuItemBinding, val c
                     }
                 }
 
-                if (itemContent.finish) {
+                if (itemContent.isFinish) {
                     itemTitle.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
                 } else {
                     itemTitle.paintFlags = Paint.FAKE_BOLD_TEXT_FLAG

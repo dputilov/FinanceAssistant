@@ -76,32 +76,32 @@ class FlatPaymentListFragment : BaseFragment<FlatPaymentListFragmentBinding>(), 
 
         bindViewModel()
 
-        activity?.intent?.also { intent ->
-            if (intent.hasExtra(Navigator.EXTRA_FLAT_KEY)) {
-                val taskGson = intent.getStringExtra(Navigator.EXTRA_FLAT_KEY)
-                val flat = Gson().fromJson(taskGson, Flat::class.java)
-                setCurrentFlat(flat)
-            }
-        }
+//        activity?.intent?.also { intent ->
+//            if (intent.hasExtra(Navigator.EXTRA_FLAT_KEY)) {
+//                val taskGson = intent.getStringExtra(Navigator.EXTRA_FLAT_KEY)
+//                val flat = Gson().fromJson(taskGson, Flat::class.java)
+//                setCurrentFlat(flat)
+//            }
+//        }
 
     }
 
     fun setCurrentFlat(flat: Flat) {
-        if (this.flat_id != flat.id) {
+        if (this.flat?.uid != flat.uid) {
             this.flat = flat
-            loadData()
+            viewModel.setFlat(flat)
         }
     }
 
-    private fun loadData() {
-
-        Log.d("RELOAD", "loadData flat = ${Gson().toJson(flat)}")
-
-        flat?.also {
-            Log.d("RELOAD", "reload")
-            viewModel.setFlat(it)
-        }
-    }
+//    private fun loadData() {
+//
+//        Log.d("RELOAD", "loadData flat = ${Gson().toJson(flat)}")
+//
+//        flat?.also {
+//            Log.d("RELOAD", "reload")
+//            viewModel.setFlat(it)
+//        }
+//    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == NavigatorResultCode.FlatPayment.resultCode) {
@@ -123,11 +123,11 @@ class FlatPaymentListFragment : BaseFragment<FlatPaymentListFragmentBinding>(), 
             }
         })
 
-        viewModel.showFlatPaymemtListLoadingIndicatorEvent.observe(viewLifecycleOwner, Observer {
+        viewModel.showFlatPaymentListLoadingIndicatorEvent.observe(viewLifecycleOwner, Observer {
             showFlatPaymentLoadingIndicator()
         })
 
-        viewModel.hideFlatPaymemtListLoadingIndicatorEvent.observe(viewLifecycleOwner, Observer {
+        viewModel.hideFlatPaymentListLoadingIndicatorEvent.observe(viewLifecycleOwner, Observer {
             hidePaymentFlatLoadingIndicator()
         })
 

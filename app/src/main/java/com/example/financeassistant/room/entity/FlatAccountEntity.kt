@@ -6,6 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.PrimaryKey
 import com.example.financeassistant.classes.FlatPaymentOperationType
+import com.example.financeassistant.classes.FlatPaymentType
 import com.example.financeassistant.room.database.RoomDatabaseSettings
 import java.util.Date
 
@@ -28,27 +29,26 @@ data class FlatAccountEntity(
     val uid: String,
 
     @ColumnInfo(name = "flat_uid")
-    val flatUid: String?,
+    val flatUid: String,
 
     @ColumnInfo(name = "type")
-    val type: Int?,
+    val type: FlatPaymentType = FlatPaymentType.None,
 
     @ColumnInfo(name = "operation")
-    val operation: Int?,
+    val operation: FlatPaymentOperationType =  FlatPaymentOperationType.NONE,
 
     @ColumnInfo(name = "date")
-    val date: Long?,
+    val date: Date?,
 
     @ColumnInfo(name = "date_doc")
-    val dateDoc: Long?,
+    val dateDoc: Date?,
 
     @ColumnInfo(name = "period")
-    val period: Long?,
+    val period: Date?,
 
     @ColumnInfo(name = "summa")
     val summa: Double?,
 
     @ColumnInfo(name = "comment")
     val comment: String?,
-
 )

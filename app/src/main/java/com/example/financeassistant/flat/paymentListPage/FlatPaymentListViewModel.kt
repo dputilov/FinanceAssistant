@@ -11,8 +11,6 @@ import com.example.financeassistant.classes.FlatPaymentOperationType.RENT
 import com.example.financeassistant.classes.FlatPaymentType.Outlay
 import com.example.financeassistant.classes.FlatPaymentType.Profit
 import com.example.financeassistant.classes.Flat
-import com.example.financeassistant.classes.FlatPaymentType
-import com.example.financeassistant.database.DB
 import com.example.financeassistant.manager.RoomDatabaseManager
 import com.example.financeassistant.room.database.toFlatPayment
 import com.example.financeassistant.room.entity.FlatAccountEntity
@@ -32,8 +30,8 @@ class FlatPaymentListViewModel(application: Application): AndroidViewModel(appli
     var accountToPayment = SingleLiveEvent<FlatPayment>()
 //    var flatPayToOpen = SingleLiveEvent<FlatPayment>()
 
-    var showFlatPaymemtListLoadingIndicatorEvent = SingleLiveEvent<Void>()
-    var hideFlatPaymemtListLoadingIndicatorEvent = SingleLiveEvent<Void>()
+    var showFlatPaymentListLoadingIndicatorEvent = SingleLiveEvent<Void>()
+    var hideFlatPaymentListLoadingIndicatorEvent = SingleLiveEvent<Void>()
 
     private var getFlatPaymentSubscription: Disposable? = null
 
@@ -71,15 +69,15 @@ class FlatPaymentListViewModel(application: Application): AndroidViewModel(appli
 
             getFlatPaymentSubscription?.dispose()
 
-            getFlatPaymentSubscription = RoomDatabaseManager.instance.db.flatAccountDao().getAllByFlatUid(listOf(flat.uid))
-            //getFlatPaymentSubscription = RoomDatabaseManager.instance.db.flatAccountDao().getAll()
+            getFlatPaymentSubscription = RoomDatabaseManager.instance.database.flatAccountDao().getAllByFlatUid(listOf(flat.uid))
+            //getFlatPaymentSubscription = RoomDatabaseManager.instance.database.flatAccountDao().getAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { onGetDataStart() }
                 .doOnComplete { onGetDataStop() }
                 .subscribe(
                     { listData: List<FlatAccountEntity> -> onGetEntitiesSuccess(listData) },
-                    { error: Throwable -> onGetDatasError(error) }
+                    { error: Throwable -> onGetDataError(error) }
                 )
         }
 
@@ -114,7 +112,7 @@ class FlatPaymentListViewModel(application: Application): AndroidViewModel(appli
                 .doOnComplete { onGetDataStop() }
                 .subscribe(
                     { listData: List<FlatPayment> -> onGetDataSuccess(listData) },
-                    { error: Throwable -> onGetDatasError(error) }
+                    { error: Throwable -> onGetDataError(error) }
                 )
 
             getFlatPaymentListUseCase.getFlatPaymentList(getApplication(), flat.id)
@@ -124,22 +122,22 @@ class FlatPaymentListViewModel(application: Application): AndroidViewModel(appli
     }
 
     private fun onGetDataStart() {
-        showFlatPaymemtListLoadingIndicatorEvent.call()
+        showFlatPaymentListLoadingIndicatorEvent.call()
     }
 
     private fun onGetDataStop() {
-        hideFlatPaymemtListLoadingIndicatorEvent.call()
+        hideFlatPaymentListLoadingIndicatorEvent.call()
     }
 
     private fun onGetDataSuccess(listData: List<FlatPayment>) {
-//        hideFlatPaymemtListLoadingIndicatorEvent.call()
+//        hideFlatPaymentListLoadingIndicatorEvent.call()
 
         flatPaymentList.value = listData.sortedByDescending { it.date }
 
     }
 
-    private fun onGetDatasError(error: Throwable) {
-        hideFlatPaymemtListLoadingIndicatorEvent.call()
+    private fun onGetDataError(error: Throwable) {
+        hideFlatPaymentListLoadingIndicatorEvent.call()
         //showGraphicLoadErrorEvent.call()
     }
 

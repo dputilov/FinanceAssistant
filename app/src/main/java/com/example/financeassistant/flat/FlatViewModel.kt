@@ -4,8 +4,17 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.example.financeassistant.classes.Flat
+import com.example.financeassistant.classes.FlatPayment
 import com.example.financeassistant.database.DB
+import com.example.financeassistant.manager.RoomDatabaseManager
+import com.example.financeassistant.room.database.toFlat
+import com.example.financeassistant.room.database.toFlatPayment
+import com.example.financeassistant.room.entity.FlatAccountEntity
+import com.example.financeassistant.room.entity.FlatEntity
 import com.example.financeassistant.utils.SingleLiveEvent
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 
 class FlatViewModel(application: Application): AndroidViewModel(application) {
 
@@ -16,6 +25,14 @@ class FlatViewModel(application: Application): AndroidViewModel(application) {
 
     var currentflat: Flat? = null
 
+    private var getFlatSubscription: Disposable? = null
+
+    override fun onCleared() {
+        super.onCleared()
+
+        getFlatSubscription?.dispose()
+    }
+
     fun initInstance(flat: Flat?) {
         this.currentflat = flat
 
@@ -24,13 +41,43 @@ class FlatViewModel(application: Application): AndroidViewModel(application) {
     }
 
     fun initFlatList(flat: Flat?){
-        val db = DB(getApplication())
-        db.open()
-        db.getAllFlats()?.also { flatList ->
-            this.flatList.value = flatList
-            currentPage.value = flatList.indexOfFirst { it.id == flat?.id }
+
+        loadFlatList(flat)
+
+//        val db = DB(getApplication())
+//        db.open()
+//        db.getAllFlats()?.also { flatList ->
+//            this.flatList.value = flatList
+//            currentPage.value = flatList.indexOfFirst { it.id == flat?.id }
+//        }
+//        db.close()
+    }
+
+    fun loadFlatList(currentFlat: Flat?){
+        getFlatSubscription?.dispose()
+
+        getFlatSubscription = RoomDatabaseManager.instance.database.flatDao().getAll()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { listData: List<FlatEntity> -> onGetEntitiesSuccess(currentFlat, listData) },
+                { error: Throwable -> onGetDatasError(error) }
+            )
+    }
+
+    fun onGetEntitiesSuccess(currentFlat: Flat?, flatAccountEntityList: List<FlatEntity>) {
+
+        val listData = mutableListOf<Flat>()
+
+        flatAccountEntityList.forEach {
+            listData.add(it.toFlat())
         }
-        db.close()
+
+        this.flatList.value = listData
+        currentPage.value = listData.indexOfFirst { it.uid == currentFlat?.uid }
+    }
+
+    private fun onGetDatasError(error: Throwable) {
     }
 
     fun updateFlat(flat: Flat) {

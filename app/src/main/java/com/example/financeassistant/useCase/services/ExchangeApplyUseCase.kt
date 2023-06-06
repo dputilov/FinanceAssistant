@@ -8,6 +8,8 @@ import com.example.financeassistant.classes.Flat
 import com.example.financeassistant.classes.FlatPayment
 import com.example.financeassistant.classes.Payment
 import com.example.financeassistant.manager.DatabaseManager
+import com.example.financeassistant.manager.RoomDatabaseManager
+import com.example.financeassistant.room.database.toEntity
 import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -90,11 +92,13 @@ class ExchangeApplyUseCase(val context: Context) {
     }
 
     private fun checkAndCreateFlat(flat: Flat) {
-        DatabaseManager.instance.exchangeCreateFlat(flat)
+        RoomDatabaseManager.instance.database.flatDao().insert(listOf(flat.toEntity()))
+        //DatabaseManager.instance.exchangeCreateFlat(flat)
     }
 
     private fun checkAndCreateFlatPayment(flatPayment: FlatPayment) {
-        DatabaseManager.instance.exchangeCreateFlatPayment(flatPayment)
+        RoomDatabaseManager.instance.database.flatAccountDao().insert(listOf(flatPayment.toEntity()))
+        //DatabaseManager.instance.exchangeCreateFlatPayment(flatPayment)
     }
 
 }

@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.financeassistant.R
 import android.text.Html
-import android.transition.TransitionManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.financeassistant.classes.FlatPayment
@@ -183,7 +182,7 @@ class FlatViewHolder constructor(binding: ItemFlatBinding, val context: Context,
 
             if (flat.isArenda) {
                 rlArenda.visible()
-                tvSummaArenda.text = D2L(flat.summa_arenda/100).toString()
+                tvSummaArenda.text = D2L(flat.summaArenda/100).toString()
             }
         }
 
@@ -226,7 +225,7 @@ class FlatViewHolder constructor(binding: ItemFlatBinding, val context: Context,
 
         tvName.paintFlags = Paint.FAKE_BOLD_TEXT_FLAG
 
-        if (!flat.finish) { // Действующий
+        if (!flat.isFinish) { // Действующий
 
             closeFlatStamp.visibility = View.GONE
 

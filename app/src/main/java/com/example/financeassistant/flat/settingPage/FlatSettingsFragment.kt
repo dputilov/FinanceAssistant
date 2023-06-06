@@ -4,11 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import com.example.financeassistant.database.DB
 import com.example.financeassistant.base.BaseFragment
 import com.example.financeassistant.classes.ARGUMENT_PAGE_NUMBER
 import com.example.financeassistant.classes.Flat
 import com.example.financeassistant.databinding.FlatSettingsFragmentBinding
+import com.example.financeassistant.flat.mainPage.FlatMainViewModel
 import com.example.financeassistant.utils.Navigator
 import com.example.financeassistant.utils.gone
 import com.example.financeassistant.utils.visible
@@ -24,6 +27,8 @@ class FlatSettingsFragment : BaseFragment<FlatSettingsFragmentBinding>() {
 
     val externalBinding: FlatSettingsFragmentBinding
         get() = binding
+
+    private val viewModel: FlatMainViewModel by activityViewModels()
 
     var pageNumber: Int = 0
     private var flat_id : Int = -1
@@ -53,13 +58,19 @@ class FlatSettingsFragment : BaseFragment<FlatSettingsFragmentBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setParam()
+        bindViewModel()
 
-        loadData()
+        setParam()
 
         setListeners()
 
         updateUI()
+    }
+
+    private fun bindViewModel() {
+        viewModel.currentFlat.observe(viewLifecycleOwner, Observer { currentFlat ->
+            loadData(currentFlat)
+        })
     }
 
     fun setListeners(){
@@ -96,38 +107,27 @@ class FlatSettingsFragment : BaseFragment<FlatSettingsFragmentBinding>() {
         }
     }
 
-    fun setCurrentFlat(flat: Flat) {
-        if (this.flat_id != flat.id) {
-            this.flat_id = flat.id
-            loadData()
-        }
-    }
+//    fun setCurrentFlat(flat: Flat) {
+//        if (this.flat_id != flat.id) {
+//            this.flat_id = flat.id
+//            loadData()
+//        }
+//    }
 
-    fun loadData(){
-        // открываем подключение к БД
-        val db = DB(requireActivity())
-        db?.open()
+    fun loadData(flat: Flat){
+        flat?.let { flat ->
+            binding.etDayBeg.setText(flat.dayStart.toString())
+            binding.etDayEnd.setText(flat.dayEnd.toString())
+            binding.etLic.setText(flat.lic)
 
-        if (flat_id > 0) {
+            binding.cbIsCounter.isChecked = flat.isCounter
+            binding.cbIsPay.isChecked = flat.isPay
+            binding.cbIsArenda.isChecked = flat.isArenda
 
-            val flat = db?.getFlat(flat_id)
+            binding.etDayArenda.setText(flat.dayArenda.toString())
 
-            flat?.let { flat ->
-                binding.etDayBeg.setText(flat.day_beg.toString())
-                binding.etDayEnd.setText(flat.day_end.toString())
-                binding.etLic.setText(flat.lic)
-
-                binding.cbIsCounter.isChecked = flat.isCounter
-                binding.cbIsPay.isChecked = flat.isPay
-                binding.cbIsArenda.isChecked = flat.isArenda
-
-                binding.etDayArenda.setText(flat.day_arenda.toString())
-
-                binding.etSummaArenda.setText(flat.summa_arenda.toString())
-
-            }
+            binding.etSummaArenda.setText(flat.summaArenda.toString())
 
         }
     }
-
 }

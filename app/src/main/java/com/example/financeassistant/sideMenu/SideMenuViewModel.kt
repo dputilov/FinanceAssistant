@@ -126,7 +126,7 @@ class SideMenuViewModel(application: Application): BaseAndroidViewModel(applicat
                     it.item?.let { item ->
                         when (item) {
                             is Credit -> !item.finish
-                            is Flat -> !item.finish
+                            is Flat -> !item.isFinish
                             else -> false
                         }
                     } ?: false

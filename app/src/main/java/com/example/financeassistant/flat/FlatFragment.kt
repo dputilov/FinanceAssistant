@@ -13,7 +13,6 @@ import com.google.gson.Gson
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -39,7 +38,7 @@ class FlatFragment : BaseFragment<FlatFragmentBinding>() {
         = FlatFragmentBinding::inflate
 
     private val FOTO_COMPRESS_VALUE: Int = 85
-    var flat_id = -1
+    var flat_uid = ""
     // открываем подключение к БД
     //var db : DB? = null
 
@@ -166,8 +165,7 @@ class FlatFragment : BaseFragment<FlatFragmentBinding>() {
 
     private fun reloadInstance(flat: Flat) {
         //if (flat_id != flat._id) {
-            flat_id = flat.id
-
+            flat_uid = flat.uid
 
             val flatJson = Gson().toJson(flat)
             requireActivity().intent?.extras?.putString(Navigator.EXTRA_FLAT_KEY, flatJson)
@@ -178,7 +176,7 @@ class FlatFragment : BaseFragment<FlatFragmentBinding>() {
                         it.setCurrentFlat(flat)
                     }
                     is FlatSettingsFragment -> {
-                        it.setCurrentFlat(flat)
+                        //it.setCurrentFlat(flat)
                     }
                     is FlatPaymentListFragment -> {
                         it.setCurrentFlat(flat)
@@ -200,7 +198,7 @@ class FlatFragment : BaseFragment<FlatFragmentBinding>() {
             val flat = if (activity.intent.hasExtra(Navigator.EXTRA_FLAT_KEY)) {
                 val flatGson = activity.intent.getStringExtra(Navigator.EXTRA_FLAT_KEY)
                 val flat = Gson().fromJson(flatGson, Flat::class.java)
-                flat_id = flat.id
+                flat_uid = flat.uid
                 flat
             } else {
                 null
@@ -208,7 +206,7 @@ class FlatFragment : BaseFragment<FlatFragmentBinding>() {
 
             viewModel.initInstance(flat)
 
-            if (flat_id < 0) {
+            if (flat_uid.isNullOrEmpty()) {
                 ToolbarUtils.setNewFlag(activity as AppCompatActivity)
             }
         }
@@ -257,24 +255,19 @@ class FlatFragment : BaseFragment<FlatFragmentBinding>() {
             // Inflate a menu to be displayed in the toolbar
            // toolbar.inflateMenu(R.menu.menu_graphic)
 
-        binding.navigation.setOnNavigationItemSelectedListener {
+        binding.navigation.setOnItemReselectedListener {
             when (it.itemId) {
                 R.id.action_home -> {
                     binding.flatPager.currentItem = 0
-                    true
                 }
                 R.id.action_settings -> {
                     binding.flatPager.currentItem = 1
-                    true
                 }
                 R.id.action_payment -> {
                     binding.flatPager.currentItem = 2
-                    true
                 }
                 else -> {
-                    false
                 }
-
             }
         }
 
@@ -294,7 +287,6 @@ class FlatFragment : BaseFragment<FlatFragmentBinding>() {
 
     }
 
-
     private fun onClickAdd() {
 
         val cur_flat = Flat()
@@ -310,9 +302,10 @@ class FlatFragment : BaseFragment<FlatFragmentBinding>() {
             cur_flat.param = flatMainFragmentView.etParam.text.toString()
 
 
-            flatMainFragment.flat?.sourceImage?.also {
-                cur_flat.sourceImage = it
-            }
+            // TODO realise save image
+//            flatMainFragment.flat?.sourceImage?.also {
+//                cur_flat.sourceImage = it
+//            }
 
             // TODO : переделать на нормальный возврат ИД кредита
             val creditListAdapter = CreditListAdapter(requireContext())
@@ -332,7 +325,7 @@ class FlatFragment : BaseFragment<FlatFragmentBinding>() {
             }
             cur_flat.summa = java.lang.Double.parseDouble(str_summa)
 
-            cur_flat.finish = flatMainFragmentView.cbFinish.isChecked
+            cur_flat.isFinish = flatMainFragmentView.cbFinish.isChecked
 
             if (flatMainFragmentView.imgFoto.drawable != null) {
                 val baos = ByteArrayOutputStream()
@@ -352,21 +345,21 @@ class FlatFragment : BaseFragment<FlatFragmentBinding>() {
 
             cur_flat.lic = flatSettingsFragmentView.etLic.text.toString()
 
-            cur_flat.day_beg = Str2Int(flatSettingsFragmentView.etDayBeg.text.toString())
-            cur_flat.day_end = Str2Int(flatSettingsFragmentView.etDayEnd.text.toString())
+            cur_flat.dayStart = Str2Int(flatSettingsFragmentView.etDayBeg.text.toString())
+            cur_flat.dayEnd = Str2Int(flatSettingsFragmentView.etDayEnd.text.toString())
 
-            cur_flat.day_arenda = Str2Int(flatSettingsFragmentView.etDayArenda.text.toString())
+            cur_flat.dayArenda = Str2Int(flatSettingsFragmentView.etDayArenda.text.toString())
 
             var str_summa_arenda = flatSettingsFragmentView.etSummaArenda.text.toString()
             if (TextUtils.isEmpty(str_summa_arenda)) {
                 str_summa_arenda = "0.0"
             }
-            cur_flat.summa_arenda = java.lang.Double.parseDouble(str_summa_arenda)
+            cur_flat.summaArenda = java.lang.Double.parseDouble(str_summa_arenda)
 
         } ?: return
 
-        if (flat_id > 0) {
-            cur_flat.id = flat_id
+        if (!flat_uid.isNullOrEmpty()) {
+            cur_flat.uid = flat_uid
             viewModel.updateFlat(cur_flat)
         } else {
             viewModel.addFlat(cur_flat)

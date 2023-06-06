@@ -66,16 +66,16 @@ data class Flat(
     var isArenda: Boolean = false,
 
     @SerializedName("DayArenda")
-    var day_arenda: Int = 0,
+    var dayArenda: Int = 0,
 
     @SerializedName("SummaArenda")
-    var summa_arenda: Double = 0.0,
+    var summaArenda: Double = 0.0,
 
     @SerializedName("CounterDayStart")
-    var day_beg: Int = 0,
+    var dayStart: Int = 0,
 
     @SerializedName("CounterDayEnd")
-    var day_end: Int = 0,
+    var dayEnd: Int = 0,
 
     @SerializedName("CreditId")
     var credit_id: Int = 0,
@@ -87,7 +87,7 @@ data class Flat(
     var summa: Double = 0.0,
 
     @SerializedName("IsFinish")
-    var finish: Boolean = false,
+    var isFinish: Boolean = false,
 
     @SerializedName("Foto")
     var foto: ByteArray? = null,
@@ -127,6 +127,6 @@ data class Flat(
             && this.adres == flat?.adres
             && this.param == flat?.param
             && this.summa == flat?.summa
-            && this.finish == flat?.finish
+            && this.isFinish == flat?.isFinish
     }
 }

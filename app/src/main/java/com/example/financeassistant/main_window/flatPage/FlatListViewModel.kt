@@ -6,8 +6,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.example.financeassistant.base.BaseAndroidViewModel
 import com.example.financeassistant.classes.BroadcastActionType
+import com.example.financeassistant.classes.Flat
 import com.example.financeassistant.useCase.GetFlatsUseCase
 import com.example.financeassistant.classes.FlatItem
+import com.example.financeassistant.manager.RoomDatabaseManager
+import com.example.financeassistant.room.database.toFlat
+import com.example.financeassistant.room.entity.FlatEntity
 import com.example.financeassistant.utils.SingleLiveEvent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -45,8 +49,49 @@ class FlatListViewModel(application: Application): BaseAndroidViewModel(applicat
         }
     }
 
-
     fun getFlatList(){
+
+        getFlatsSubscription?.dispose()
+
+        getFlatsSubscription = RoomDatabaseManager.instance.database.flatDao().getAll()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { onGetFlatItemsListStart() }
+            .subscribe(
+                { listData: List<FlatEntity> -> onGetDataSuccess(listData) },
+                { error: Throwable -> onGetError(error) }
+            )
+    }
+
+    private fun onGetFlatItemsListStart() {
+        showFlatLoadingIndicatorEvent.call()
+    }
+
+    private fun onGetDataSuccess(flatEntityList: List<FlatEntity>) {
+
+        val listData = mutableListOf<FlatItem>()
+
+        flatEntityList.forEach {
+            val newFlat = FlatItem(
+                flat = it.toFlat(),
+                flatPaymentStateList = listOf()
+            )
+            listData.add(newFlat)
+        }
+
+        flatItemList.value = listData
+
+        hideFlatLoadingIndicatorEvent.call()
+    }
+
+    private fun onGetError(error: Throwable) {
+        Log.d("DMS_TASK", "onGetDatasError = $error")
+        //hideGraphicLoadingIndicatorEvent.call()
+        //showGraphicLoadErrorEvent.call()
+    }
+
+    // TODO DELETE
+    fun getFlatList_old(){
 
         getFlatsSubscription?.dispose()
 
@@ -55,7 +100,7 @@ class FlatListViewModel(application: Application): BaseAndroidViewModel(applicat
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { onGetFlatItemsListStart() }
                 .subscribe(
-                        { listData: List<FlatItem> -> onGetDataSuccess(listData) },
+                        { listData: List<FlatItem> -> onGetDataSuccess_old(listData) },
                         { error: Throwable -> onGetDatasError(error) }
                 )
 
@@ -63,11 +108,8 @@ class FlatListViewModel(application: Application): BaseAndroidViewModel(applicat
 
     }
 
-    private fun onGetFlatItemsListStart() {
-        showFlatLoadingIndicatorEvent.call()
-    }
 
-    private fun onGetDataSuccess(listData: List<FlatItem>) {
+    private fun onGetDataSuccess_old(listData: List<FlatItem>) {
         hideFlatLoadingIndicatorEvent.call()
 
         flatItemList.value = listData

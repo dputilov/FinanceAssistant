@@ -99,9 +99,9 @@ class GetFlatsUseCase {
                         credit_id = c.getInt(c.getColumnIndex(DB.CL_FLAT_CREDIT_ID)),
                         isPay = (c.getInt(c.getColumnIndex(DB.CL_FLAT_ISPAY)) == 1),
                         isArenda = (c.getInt(c.getColumnIndex(DB.CL_FLAT_ISARENDA)) == 1),
-                        summa_arenda = c.getDouble(c.getColumnIndex(DB.CL_FLAT_SUMMA_ARENDA)),
+                        summaArenda = c.getDouble(c.getColumnIndex(DB.CL_FLAT_SUMMA_ARENDA)),
                         isCounter = (c.getInt(c.getColumnIndex(DB.CL_FLAT_ISCOUNTER)) == 1),
-                        finish = (c.getInt(c.getColumnIndex(DB.CL_FLAT_FINISH)) == 1),
+                        isFinish = (c.getInt(c.getColumnIndex(DB.CL_FLAT_FINISH)) == 1),
                         foto = foto,
                         summaFinRes = summaFinRes
                     )

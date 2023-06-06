@@ -138,29 +138,29 @@
 
 <!--        <include layout="@layout/flat_delimiter" />-->
 
-      <com.example.financeassistant.view.StrokeTextView
-          android:layout_width="match_parent"
-          android:layout_height="@dimen/flat_delimiter_layout_height"
-          android:layout_weight="1"
-          android:layout_marginTop="@dimen/flat_item_margin_top"
-          app:text="@string/title_flat_adres"
-          app:textColor="@color/color_stroke_delimiter_text"
-          app:lineColor="@color/flat_item_delimiter_background"
-          app:textOffset="@dimen/flat_delimiter_text_start_offset"
-          app:textSize="14sp"
-          />
-
         <LinearLayout
             android:id="@+id/adresLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/flat_margin_start"
-            android:layout_marginEnd="@dimen/flat_margin_end"
             android:orientation="vertical">
+
+          <com.example.financeassistant.view.StrokeTextView
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/flat_delimiter_layout_height"
+              android:layout_weight="1"
+              android:layout_marginTop="@dimen/flat_item_margin_top"
+              app:text="@string/title_flat_adres"
+              app:textColor="@color/color_stroke_delimiter_text"
+              app:lineColor="@color/flat_item_delimiter_background"
+              app:textOffset="@dimen/flat_delimiter_text_start_offset"
+              app:textSize="14sp"
+              />
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/flat_margin_start"
+                android:layout_marginEnd="@dimen/flat_margin_end"
                 android:orientation="horizontal">
 
                 <EditText

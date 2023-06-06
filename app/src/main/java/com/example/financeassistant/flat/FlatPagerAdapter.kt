@@ -25,7 +25,7 @@ class FlatPagerAdapter constructor(fragmentManager : FragmentManager): FragmentP
                     it.setCurrentFlat(flat)
                 }
                 is FlatSettingsFragment -> {
-                    it.setCurrentFlat(flat)
+                    //it.setCurrentFlat(flat)
                 }
                 is FlatPaymentListFragment -> {
                     it.setCurrentFlat(flat)
