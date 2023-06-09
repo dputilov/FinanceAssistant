@@ -55,12 +55,11 @@ class FlatSettingsFragment : BaseFragment<FlatSettingsFragmentBinding>() {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun setup() {
 
         bindViewModel()
 
-        setParam()
+//        setParam()
 
         setListeners()
 
@@ -97,15 +96,15 @@ class FlatSettingsFragment : BaseFragment<FlatSettingsFragmentBinding>() {
         }
     }
 
-    private fun setParam() {
-        val intent = requireActivity().intent
-
-        if (intent.hasExtra(Navigator.EXTRA_FLAT_KEY)) {
-            val taskGson = intent.getStringExtra(Navigator.EXTRA_FLAT_KEY)
-            val flat = Gson().fromJson(taskGson, Flat::class.java)
-            flat_id = flat.id
-        }
-    }
+//    private fun setParam() {
+//        val intent = requireActivity().intent
+//
+//        if (intent.hasExtra(Navigator.EXTRA_FLAT_KEY)) {
+//            val taskGson = intent.getStringExtra(Navigator.EXTRA_FLAT_KEY)
+//            val flat = Gson().fromJson(taskGson, Flat::class.java)
+//            flat_id = flat.id
+//        }
+//    }
 
 //    fun setCurrentFlat(flat: Flat) {
 //        if (this.flat_id != flat.id) {
@@ -129,5 +128,7 @@ class FlatSettingsFragment : BaseFragment<FlatSettingsFragmentBinding>() {
             binding.etSummaArenda.setText(flat.summaArenda.toString())
 
         }
+
+        updateUI()
     }
 }

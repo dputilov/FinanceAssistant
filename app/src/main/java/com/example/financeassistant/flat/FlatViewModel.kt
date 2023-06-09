@@ -1,17 +1,16 @@
 package com.example.financeassistant.flat
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.example.financeassistant.classes.Flat
-import com.example.financeassistant.classes.FlatPayment
-import com.example.financeassistant.database.DB
 import com.example.financeassistant.manager.RoomDatabaseManager
+import com.example.financeassistant.room.database.toEntity
 import com.example.financeassistant.room.database.toFlat
-import com.example.financeassistant.room.database.toFlatPayment
-import com.example.financeassistant.room.entity.FlatAccountEntity
 import com.example.financeassistant.room.entity.FlatEntity
 import com.example.financeassistant.utils.SingleLiveEvent
+import com.example.financeassistant.utils.getNewUid
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -23,34 +22,34 @@ class FlatViewModel(application: Application): AndroidViewModel(application) {
     var reloadToFlatEvent = SingleLiveEvent<Flat>()
     var currentPage = SingleLiveEvent<Int>()
 
+    var exitFromFlatView = SingleLiveEvent<Flat>()
+
     var currentflat: Flat? = null
 
     private var getFlatSubscription: Disposable? = null
+    private var updateFlatSubscription: Disposable? = null
+
+    val TAG = "ROOM_TEST"
 
     override fun onCleared() {
         super.onCleared()
 
         getFlatSubscription?.dispose()
+        updateFlatSubscription?.dispose()
     }
 
     fun initInstance(flat: Flat?) {
         this.currentflat = flat
 
         initFlatList(flat)
+    }
 
+    fun reloadInstance() {
+        reloadToFlatEvent.value = currentflat
     }
 
     fun initFlatList(flat: Flat?){
-
         loadFlatList(flat)
-
-//        val db = DB(getApplication())
-//        db.open()
-//        db.getAllFlats()?.also { flatList ->
-//            this.flatList.value = flatList
-//            currentPage.value = flatList.indexOfFirst { it.id == flat?.id }
-//        }
-//        db.close()
     }
 
     fun loadFlatList(currentFlat: Flat?){
@@ -61,11 +60,11 @@ class FlatViewModel(application: Application): AndroidViewModel(application) {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { listData: List<FlatEntity> -> onGetEntitiesSuccess(currentFlat, listData) },
-                { error: Throwable -> onGetDatasError(error) }
+                { error: Throwable -> onGetDataError(error) }
             )
     }
 
-    fun onGetEntitiesSuccess(currentFlat: Flat?, flatAccountEntityList: List<FlatEntity>) {
+    private fun onGetEntitiesSuccess(currentFlat: Flat?, flatAccountEntityList: List<FlatEntity>) {
 
         val listData = mutableListOf<Flat>()
 
@@ -77,29 +76,40 @@ class FlatViewModel(application: Application): AndroidViewModel(application) {
         currentPage.value = listData.indexOfFirst { it.uid == currentFlat?.uid }
     }
 
-    private fun onGetDatasError(error: Throwable) {
+    private fun onGetDataError(error: Throwable) {
     }
 
-    fun updateFlat(flat: Flat) {
-        val db = DB(getApplication())
-        db.open()
-        db.flat_Update(flat)
-        db.close()
+    private fun updateFlat(flat: Flat) {
+//        updateFlatSubscription?.dispose()
+//
+//        updateFlatSubscription = RoomDatabaseManager.instance.database.flatDao().update(listOf(flat.toEntity()))
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe(
+//                { listData: List<String> -> onFlatUpdated(listData) },
+//                { error: Throwable -> onGetDataError(error) }
+//            )
+
+        Log.d(TAG, "flat = $flat")
+
+        RoomDatabaseManager.instance.database.flatDao().update(listOf(flat.toEntity()))
+
+        val listFlat = RoomDatabaseManager.instance.database.flatDao().getAllTest()
+
+        Log.d(TAG, "updated flat = ${listFlat.find { it.uid == flat.uid }}")
+
     }
 
-    fun addFlat(flat: Flat) {
-        val db = DB(getApplication())
-        db.open()
-        db.flat_Add(flat)
-        db.close()
+    private fun insertFlat(flat: Flat) {
+        RoomDatabaseManager.instance.database.flatDao().insert(listOf(flat.toEntity()))
     }
 
-    fun getFlatList() : List<Flat> {
+    private fun onFlatUpdated(listData: List<String>) {
+        exitFromFlatView.value = currentflat
+    }
+
+    private fun getFlatList() : List<Flat> {
         return flatList.value ?: listOf()
-    }
-
-    fun reloadInstance() {
-        reloadToFlatEvent.value = currentflat
     }
 
     fun onChangeObjectPage(position : Int) {
@@ -112,7 +122,19 @@ class FlatViewModel(application: Application): AndroidViewModel(application) {
                 }
             }
         }
+    }
 
+    fun onClickAddFlat(flat: Flat) {
+        currentflat = flat
+
+        if (flat.uid.isNullOrEmpty()) {
+            flat.uid = getNewUid()
+            insertFlat(flat)
+        } else {
+            updateFlat(flat)
+        }
+
+        exitFromFlatView.value = currentflat
     }
 
 }

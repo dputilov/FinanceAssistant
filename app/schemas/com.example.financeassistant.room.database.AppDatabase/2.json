@@ -1,0 +1,339 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "750fea64ba8f1e2b8393103cdbf28c04",
+    "entities": [
+      {
+        "tableName": "FLAT",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` TEXT NOT NULL, `type` INTEGER NOT NULL, `name` TEXT NOT NULL, `adres` TEXT NOT NULL, `param` TEXT NOT NULL, `day_arenda` INTEGER NOT NULL, `summa_arenda` REAL NOT NULL, `day_start` INTEGER NOT NULL, `day_end` INTEGER NOT NULL, `credit_uid` TEXT, `lic` TEXT, `summa` REAL NOT NULL, `is_counter` INTEGER NOT NULL, `is_pay` INTEGER NOT NULL, `is_arenda` INTEGER NOT NULL, `is_finish` INTEGER NOT NULL, `issue_year` INTEGER, `purchase_date` INTEGER, `image_uid` TEXT, `image_owner_uid` TEXT, `image_is_avatar` INTEGER, `image_source_url` TEXT, `image_file_name` TEXT, `image_extension` TEXT, `image_create_at` INTEGER, `image_width` INTEGER, `image_height` INTEGER, `image_size` INTEGER, PRIMARY KEY(`uid`))",
+        "fields": [
+          {
+            "fieldPath": "uid",
+            "columnName": "uid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "adres",
+            "columnName": "adres",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "param",
+            "columnName": "param",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dayArenda",
+            "columnName": "day_arenda",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "summaArenda",
+            "columnName": "summa_arenda",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dayStart",
+            "columnName": "day_start",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dayEnd",
+            "columnName": "day_end",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "creditUid",
+            "columnName": "credit_uid",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lic",
+            "columnName": "lic",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "summa",
+            "columnName": "summa",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isCounter",
+            "columnName": "is_counter",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isPay",
+            "columnName": "is_pay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isArenda",
+            "columnName": "is_arenda",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFinish",
+            "columnName": "is_finish",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "issueYear",
+            "columnName": "issue_year",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "purchaseDate",
+            "columnName": "purchase_date",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sourceImage.uid",
+            "columnName": "image_uid",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sourceImage.ownerUid",
+            "columnName": "image_owner_uid",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sourceImage.isAvatar",
+            "columnName": "image_is_avatar",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sourceImage.sourceUrl",
+            "columnName": "image_source_url",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sourceImage.filename",
+            "columnName": "image_file_name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sourceImage.extension",
+            "columnName": "image_extension",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sourceImage.createAt",
+            "columnName": "image_create_at",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sourceImage.width",
+            "columnName": "image_width",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sourceImage.height",
+            "columnName": "image_height",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sourceImage.size",
+            "columnName": "image_size",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uid"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "FLAT_ACCOUNT",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` TEXT NOT NULL, `flat_uid` TEXT NOT NULL, `type` INTEGER NOT NULL, `operation` INTEGER NOT NULL, `date` INTEGER, `date_doc` INTEGER, `period` INTEGER, `summa` REAL, `comment` TEXT, PRIMARY KEY(`uid`))",
+        "fields": [
+          {
+            "fieldPath": "uid",
+            "columnName": "uid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "flatUid",
+            "columnName": "flat_uid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "operation",
+            "columnName": "operation",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dateDoc",
+            "columnName": "date_doc",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "period",
+            "columnName": "period",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "summa",
+            "columnName": "summa",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "comment",
+            "columnName": "comment",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uid"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "SOURCE_IMAGE",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` TEXT NOT NULL, `owner_uid` TEXT NOT NULL, `is_avatar` INTEGER NOT NULL, `source_url` TEXT NOT NULL, `file_name` TEXT NOT NULL, `extension` TEXT NOT NULL, `create_at` INTEGER, `width` INTEGER NOT NULL, `height` INTEGER NOT NULL, `size` INTEGER NOT NULL, PRIMARY KEY(`uid`, `owner_uid`))",
+        "fields": [
+          {
+            "fieldPath": "uid",
+            "columnName": "uid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ownerUid",
+            "columnName": "owner_uid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isAvatar",
+            "columnName": "is_avatar",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sourceUrl",
+            "columnName": "source_url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "filename",
+            "columnName": "file_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "extension",
+            "columnName": "extension",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createAt",
+            "columnName": "create_at",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "width",
+            "columnName": "width",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "height",
+            "columnName": "height",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "size",
+            "columnName": "size",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uid",
+            "owner_uid"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '750fea64ba8f1e2b8393103cdbf28c04')"
+    ]
+  }
+}

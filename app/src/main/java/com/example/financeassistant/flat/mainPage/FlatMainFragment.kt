@@ -14,8 +14,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import androidx.core.app.ActivityCompat
+import androidx.core.widget.doAfterTextChanged
+import androidx.databinding.adapters.AdapterViewBindingAdapter.OnItemSelected
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.example.financeassistant.R
@@ -26,6 +30,7 @@ import com.example.financeassistant.classes.HomeType
 import com.example.financeassistant.classes.SourceImage
 import com.example.financeassistant.databinding.FlatMainFragmentBinding
 import com.example.financeassistant.flat.CreditListAdapter
+import com.example.financeassistant.flat.FlatFragment
 import com.example.financeassistant.manager.DatabaseManager
 import com.example.financeassistant.manager.FileManager
 import com.example.financeassistant.utils.KeyboardUtils
@@ -46,19 +51,16 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FlatMainFragmentBinding
         = FlatMainFragmentBinding::inflate
 
-    val externalBinding: FlatMainFragmentBinding
-        get() = binding
-
     private val viewModel: FlatMainViewModel by activityViewModels()
+
+//    val externalBinding : FlatMainFragmentBinding
+//        get() = binding
 
     var pageNumber: Int = 0
 
     var listHomeType: List<HomeType> = HomeType.getHomeTypeList()
 
     private var creditListAdapter: CreditListAdapter? = null
-    //private var flat_uid = ""
-
-    //var flat: Flat? = null
 
     private val MICROPHONE_REQUEST_CODE = 121
     private val MICROPHONE_ADRES_REQUEST_CODE = 122
@@ -84,33 +86,22 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun setup() {
+
+        bindViewModel()
 
         setupAdapters()
-
-        initData()
 
         setListeners()
 
         hideKeyboard()
 
-        bindViewModel()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-
+        initInstance()
     }
 
     private fun bindViewModel() {
         viewModel.currentFlat.observe(viewLifecycleOwner, Observer { currentFlat ->
-            updateUI(currentFlat)
+            updateData(currentFlat)
         })
 
         viewModel.picture.observe(viewLifecycleOwner, Observer { picture ->
@@ -118,41 +109,41 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
         })
     }
 
-    fun initData() {
-        activity?.intent?.also { intent ->
+    private fun initInstance() {
+        val flat = activity?.intent?.let { intent ->
             if (intent.hasExtra(Navigator.EXTRA_FLAT_KEY)) {
                 val taskGson = intent.getStringExtra(Navigator.EXTRA_FLAT_KEY)
                 val flat = Gson().fromJson(taskGson, Flat::class.java)
-                //flat_uid = flat.uid
-
-                viewModel.initInstance(flat)
+                flat
+            } else {
+                Flat()
             }
-        }
+        } ?: Flat()
+
+        setCurrentFlat(flat)
     }
 
     fun setCurrentFlat(flat: Flat) {
-
         viewModel.setCurrentFlat(flat)
-
-//        if (this.flat_uid != flat.uid) {
-//            this.flat_uid = flat.uid
-//            loadData()
-//        }
     }
 
-    fun setupAdapters() {
+    fun getCurrentFlat(): Flat? {
+        return viewModel.getCurrentFlat()
+    }
+
+    private fun setupAdapters() {
         setTypeSpinnerAdapter()
 
         activity?.also { activity ->
             creditListAdapter = CreditListAdapter(activity)
             creditListAdapter?.let { adapter ->
                 binding.spCredit.adapter = adapter.getAdapter()
-                val listData = adapter.listData
+         //       val listData = adapter.listData
             }
         }
     }
 
-    fun updateUI(flat: Flat) {
+    private fun updateData(flat: Flat) {
         activity?.also { activity ->
             flat?.also { flat ->
                 binding.etFlatName.setText(flat.name)
@@ -174,6 +165,10 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
             }
         }
 
+        updateUI(flat)
+    }
+
+    fun updateUI(flat: Flat) {
         if (flat.type == HomeType.Automobile) {
             binding.adresLayout.gone()
             binding.etAdres.gone()
@@ -181,7 +176,6 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
             binding.adresLayout.visible()
             binding.etAdres.visible()
         }
-
     }
 
     fun updatePicture(picture: ByteArray?) {
@@ -234,6 +228,51 @@ class FlatMainFragment : BaseFragment<FlatMainFragmentBinding>() {
             true
         }
 
+        binding.etAdres.doAfterTextChanged {
+            viewModel.onAdresChanged(it.toString())
+        }
+
+        binding.etFlatName.doAfterTextChanged {
+            viewModel.onNameChanged(it.toString())
+        }
+
+        binding.etParam.doAfterTextChanged {
+            viewModel.onParamChanged(it.toString())
+        }
+
+        binding.etSumma.doAfterTextChanged {
+            viewModel.onSummaChanged(it.toString().toDouble())
+        }
+
+        binding.cbFinish.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.onIsFinishChanged(isChecked)
+        }
+
+        binding.spCredit.onItemSelectedListener = object : OnItemSelectedListener{
+            override fun onItemSelected(adapter: AdapterView<*>?, p1: View?, selectedItemPosition: Int, p3: Long) {
+                creditListAdapter?.let { adapter ->
+                    adapter.updateListCreditData()
+                    val listData = adapter.listData
+                    val creditUid = listData.get(selectedItemPosition)
+                    viewModel.onCreditChanged(creditUid.toString())
+                }
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+                viewModel.onCreditChanged("")
+            }
+        }
+
+        binding.spType.onItemSelectedListener = object : OnItemSelectedListener{
+            override fun onItemSelected(adapter: AdapterView<*>?, view: View?, selectedItemPosition: Int, p3: Long) {
+                val type = HomeType.getHomeTypeList()[selectedItemPosition]
+                viewModel.onHomeTypeChanged(type)
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+                viewModel.onHomeTypeChanged(HomeType.None)
+            }
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

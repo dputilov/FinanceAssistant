@@ -1,11 +1,17 @@
 package com.example.financeassistant
 
+import android.util.Log
 import com.example.financeassistant.classes.Credit
 import com.example.financeassistant.classes.CreditTotals
 import com.example.financeassistant.classes.Payment
+import com.example.financeassistant.manager.RoomDatabaseManager
+import com.example.financeassistant.room.entity.FlatEntity
+import com.example.financeassistant.utils.getNewUid
 import org.junit.Test
 
 import org.junit.Assert.*
+import java.util.Date
+import java.util.UUID
 
 /**
  * Example local unit test, which will execute on the development machine (host).

@@ -248,3 +248,7 @@ fun str2Double(str: String) : Double{
 
     return result
 }
+
+fun getNewUid() : String {
+    return UUID.randomUUID().toString()
+}

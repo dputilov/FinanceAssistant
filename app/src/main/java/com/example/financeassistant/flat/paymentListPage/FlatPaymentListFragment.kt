@@ -19,6 +19,7 @@ import com.example.financeassistant.classes.FlatPaymentOperationType
 import com.example.financeassistant.classes.Flat
 import com.example.financeassistant.classes.SWIPE_REFRESH_DISTANCE_TO_TRIGGER
 import com.example.financeassistant.databinding.FlatPaymentListFragmentBinding
+import com.example.financeassistant.flat.FlatFragment
 import com.example.financeassistant.utils.Navigator
 import com.example.financeassistant.utils.Navigator.Companion.navigateToFlatPaymentActivity
 import com.example.financeassistant.utils.NavigatorResultCode
@@ -65,8 +66,9 @@ class FlatPaymentListFragment : BaseFragment<FlatPaymentListFragmentBinding>(), 
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun setup() {
+
+        bindViewModel()
 
         initAdapter()
 
@@ -74,16 +76,17 @@ class FlatPaymentListFragment : BaseFragment<FlatPaymentListFragmentBinding>(), 
 
         initSwipeRefresh()
 
-        bindViewModel()
+        initInstance()
+    }
 
-//        activity?.intent?.also { intent ->
-//            if (intent.hasExtra(Navigator.EXTRA_FLAT_KEY)) {
-//                val taskGson = intent.getStringExtra(Navigator.EXTRA_FLAT_KEY)
-//                val flat = Gson().fromJson(taskGson, Flat::class.java)
-//                setCurrentFlat(flat)
-//            }
-//        }
-
+    private fun initInstance() {
+        activity?.intent?.also { intent ->
+            if (intent.hasExtra(Navigator.EXTRA_FLAT_KEY)) {
+                val taskGson = intent.getStringExtra(Navigator.EXTRA_FLAT_KEY)
+                val flat = Gson().fromJson(taskGson, Flat::class.java)
+                setCurrentFlat(flat)
+            }
+        }
     }
 
     fun setCurrentFlat(flat: Flat) {

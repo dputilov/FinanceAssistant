@@ -1,6 +1,7 @@
 package com.example.financeassistant.flat.mainPage
 
 import android.app.Application
+import android.content.IntentSender.OnFinished
 import android.media.Image
 import android.net.Uri
 import android.util.Log
@@ -9,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.financeassistant.app.FinanceAssistantApp
 import com.example.financeassistant.base.BaseAndroidViewModel
 import com.example.financeassistant.classes.Flat
+import com.example.financeassistant.classes.HomeType
 import com.example.financeassistant.classes.SourceImage
 import com.example.financeassistant.useCase.services.ExchangeFlatUseCase
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -36,12 +38,14 @@ class FlatMainViewModel(application: Application): BaseAndroidViewModel(applicat
         exchangeUpdatePictureSubscription?.dispose()
     }
 
-    fun initInstance(flat: Flat) {
-        currentFlat.value = flat
+    fun setCurrentFlat(flat: Flat) {
+        if (currentFlat.value == null || currentFlat.value?.uid != flat.uid) {
+            currentFlat.value = flat
+        }
     }
 
-    fun setCurrentFlat(flat: Flat) {
-        currentFlat.value = flat
+    fun getCurrentFlat(): Flat? {
+        return currentFlat.value
     }
 
     fun updatePicture(sourceImage: SourceImage) {
@@ -120,5 +124,49 @@ class FlatMainViewModel(application: Application): BaseAndroidViewModel(applicat
     private fun onUploadPictureFail(error: Throwable) {
         Log.d("HTTP", "http ERROR = ${error.message}")
     }
+
+    // On parameters change functions
+    fun onCreditChanged(creditUid: String?) {
+        currentFlat.value?.also {
+            it.creditUid = creditUid
+        }
+    }
+
+    fun onHomeTypeChanged(homeType: HomeType) {
+        currentFlat.value?.also {
+            it.type = homeType
+        }
+    }
+
+    fun onSummaChanged(summa: Double) {
+        currentFlat.value?.also {
+            it.summa = summa
+        }
+    }
+
+    fun onIsFinishChanged(isFinish: Boolean) {
+        currentFlat.value?.also {
+            it.isFinish = isFinish
+        }
+    }
+
+    fun onAdresChanged(adres: String) {
+        currentFlat.value?.also {
+            it.adres = adres
+        }
+    }
+
+    fun onNameChanged(name: String) {
+        currentFlat.value?.also {
+            it.name = name
+        }
+    }
+
+    fun onParamChanged(param: String) {
+        currentFlat.value?.also {
+            it.param = param
+        }
+    }
+
 
 }

@@ -88,8 +88,17 @@ class FlatFragment : BaseFragment<FlatFragmentBinding>() {
             }
         })
 
+        viewModel.exitFromFlatView.observe(viewLifecycleOwner, Observer { flat ->
+            flat?.also { flat ->
+                exitFromFlatView(flat)
+            }
+        })
+
     }
 
+    fun getCurrentFlat() : Flat? {
+        return viewModel.currentflat
+    }
 
     private fun setObjectListPager() {
         var currentPosition = 0
@@ -98,36 +107,36 @@ class FlatFragment : BaseFragment<FlatFragmentBinding>() {
         binding.objectListPager.adapter = objectListPagerAdapter
         objectListPagerAdapter?.notifyDataSetChanged()
 
-        binding.objectListPager.addOnPageChangeListener(object : OnPageChangeListener {
-
-            override fun onPageSelected(position: Int) {
-                Log.d("RELOAD", "1 position = $position object =${objectListPagerAdapter?.flatItemsList}")
-
-                viewModel.onChangeObjectPage(position)
-
-            }
-
-            override fun onPageScrolled(position: Int, positionOffset: Float,
-                positionOffsetPixels: Int) {
-
-                val newPosition = if (positionOffset > 0.5) {
-                    position + 1
-                } else {
-                    position
-                }
-
-                if (currentPosition != newPosition) {
-                    currentPosition = newPosition
-                    //viewModel.setCurrentDevice(currentPosition)
-                }
-
-                val alpha = abs(1 - positionOffset / 0.5).toFloat()
-
-                //flatPager.alpha = alpha
-            }
-
-            override fun onPageScrollStateChanged(state: Int) {}
-        })
+//        binding.objectListPager.addOnPageChangeListener(object : OnPageChangeListener {
+//
+//            override fun onPageSelected(position: Int) {
+//                Log.d("RELOAD", "1 position = $position object =${objectListPagerAdapter?.flatItemsList}")
+//
+//                viewModel.onChangeObjectPage(position)
+//
+//            }
+//
+//            override fun onPageScrolled(position: Int, positionOffset: Float,
+//                positionOffsetPixels: Int) {
+//
+//                val newPosition = if (positionOffset > 0.5) {
+//                    position + 1
+//                } else {
+//                    position
+//                }
+//
+//                if (currentPosition != newPosition) {
+//                    currentPosition = newPosition
+//                    //viewModel.setCurrentDevice(currentPosition)
+//                }
+//
+//                val alpha = abs(1 - positionOffset / 0.5).toFloat()
+//
+//                //flatPager.alpha = alpha
+//            }
+//
+//            override fun onPageScrollStateChanged(state: Int) {}
+//        })
 
         binding.objectListPager.currentItem = 0
     }
@@ -289,86 +298,102 @@ class FlatFragment : BaseFragment<FlatFragmentBinding>() {
 
     private fun onClickAdd() {
 
-        val cur_flat = Flat()
-
         // Main fragment
-        (pagerAdapter?.getItem(0) as FlatMainFragment)?.let { flatMainFragment ->
+        val currentFlat = (pagerAdapter?.getItem(0) as FlatMainFragment)?.let { flatMainFragment ->
 
-            val flatMainFragmentView = flatMainFragment.externalBinding
-        //fragmentManager.findFragmentByTag("flatMainFragment")?.view?.let { flatMainFragmentView ->
-
-            cur_flat.name = flatMainFragmentView.etFlatName.text.toString()
-            cur_flat.adres = flatMainFragmentView.etAdres.text.toString()
-            cur_flat.param = flatMainFragmentView.etParam.text.toString()
+            flatMainFragment.getCurrentFlat()
 
 
-            // TODO realise save image
-//            flatMainFragment.flat?.sourceImage?.also {
-//                cur_flat.sourceImage = it
+//            cur_flat.name = flatMainFragmentView.etFlatName.text.toString()
+//            cur_flat.adres = flatMainFragmentView.etAdres.text.toString()
+//            cur_flat.param = flatMainFragmentView.etParam.text.toString()
+//
+//
+//            // TODO realise save image
+////            flatMainFragment.flat?.sourceImage?.also {
+////                cur_flat.sourceImage = it
+////            }
+//
+//            // TODO : переделать на нормальный возврат ИД кредита
+//            val creditListAdapter = CreditListAdapter(requireContext())
+//            creditListAdapter?.let { adapter ->
+//                adapter.updateListCreditData()
+//                val listData = adapter.listData
+//                cur_flat.credit_id = listData.get(flatMainFragmentView.spCredit.selectedItemPosition)
+//            }
+//
+//
+//            val listHomeTypes = HomeType.getHomeTypeList()
+//            cur_flat.type = listHomeTypes.get(flatMainFragmentView.spType.selectedItemPosition)
+//
+//            var str_summa = flatMainFragmentView.etSumma.text.toString()
+//            if (TextUtils.isEmpty(str_summa)) {
+//                str_summa = "0"
+//            }
+//            cur_flat.summa = java.lang.Double.parseDouble(str_summa)
+//
+//            cur_flat.isFinish = flatMainFragmentView.cbFinish.isChecked
+//
+//            if (flatMainFragmentView.imgFoto.drawable != null) {
+//                val baos = ByteArrayOutputStream()
+//                val bitmap = (flatMainFragmentView.imgFoto.drawable as BitmapDrawable).bitmap
+//                bitmap.compress(Bitmap.CompressFormat.JPEG, FOTO_COMPRESS_VALUE, baos)
+//                cur_flat.foto = baos.toByteArray()
 //            }
 
-            // TODO : переделать на нормальный возврат ИД кредита
-            val creditListAdapter = CreditListAdapter(requireContext())
-            creditListAdapter?.let { adapter ->
-                adapter.updateListCreditData()
-                val listData = adapter.listData
-                cur_flat.credit_id = listData.get(flatMainFragmentView.spCredit.selectedItemPosition)
-            }
-
-
-            val listHomeTypes = HomeType.getHomeTypeList()
-            cur_flat.type = listHomeTypes.get(flatMainFragmentView.spType.selectedItemPosition)
-
-            var str_summa = flatMainFragmentView.etSumma.text.toString()
-            if (TextUtils.isEmpty(str_summa)) {
-                str_summa = "0"
-            }
-            cur_flat.summa = java.lang.Double.parseDouble(str_summa)
-
-            cur_flat.isFinish = flatMainFragmentView.cbFinish.isChecked
-
-            if (flatMainFragmentView.imgFoto.drawable != null) {
-                val baos = ByteArrayOutputStream()
-                val bitmap = (flatMainFragmentView.imgFoto.drawable as BitmapDrawable).bitmap
-                bitmap.compress(Bitmap.CompressFormat.JPEG, FOTO_COMPRESS_VALUE, baos)
-                cur_flat.foto = baos.toByteArray()
-            }
-
         } ?: return
 
-        // Settings fragment
-        (pagerAdapter?.getItem(1) as FlatSettingsFragment)?.externalBinding?.let { flatSettingsFragmentView ->
-        //fragmentManager.findFragmentByTag("flatSettingsFragment")?.view?.let{ flatSettingsFragmentView ->
-            cur_flat.isCounter = flatSettingsFragmentView.cbIsCounter.isChecked
-            cur_flat.isPay = flatSettingsFragmentView.cbIsPay.isChecked
-            cur_flat.isArenda = flatSettingsFragmentView.cbIsArenda.isChecked
-
-            cur_flat.lic = flatSettingsFragmentView.etLic.text.toString()
-
-            cur_flat.dayStart = Str2Int(flatSettingsFragmentView.etDayBeg.text.toString())
-            cur_flat.dayEnd = Str2Int(flatSettingsFragmentView.etDayEnd.text.toString())
-
-            cur_flat.dayArenda = Str2Int(flatSettingsFragmentView.etDayArenda.text.toString())
-
-            var str_summa_arenda = flatSettingsFragmentView.etSummaArenda.text.toString()
-            if (TextUtils.isEmpty(str_summa_arenda)) {
-                str_summa_arenda = "0.0"
-            }
-            cur_flat.summaArenda = java.lang.Double.parseDouble(str_summa_arenda)
-
-        } ?: return
-
-        if (!flat_uid.isNullOrEmpty()) {
-            cur_flat.uid = flat_uid
-            viewModel.updateFlat(cur_flat)
-        } else {
-            viewModel.addFlat(cur_flat)
+        if (currentFlat == null) {
+            return
         }
 
+//        // Settings fragment
+//        (pagerAdapter?.getItem(1) as FlatSettingsFragment)?.let { flatSettingsFragment ->
+//
+//            val settingFlat = flatSettingsFragment.getCurrentFlat()
+//
+//            currentFlat.apply {
+//                this.isCounter = settingFlat.isCounter
+//                this.isPay = settingFlat.isPay
+//                this.isArenda = settingFlat.isArenda
+//
+//                this.lic = settingFlat.lic
+//
+//                this.dayStart = settingFlat.dayStart
+//                this.dayEnd = settingFlat.dayEnd
+//
+//                this.dayArenda = settingFlat.dayArenda
+//
+//                this.summaArenda = settingFlat.summaArenda
+//            }
+//
+////            //fragmentManager.findFragmentByTag("flatSettingsFragment")?.view?.let{ flatSettingsFragmentView ->
+////            cur_flat.isCounter = flatSettingsFragmentView.cbIsCounter.isChecked
+////            cur_flat.isPay = flatSettingsFragmentView.cbIsPay.isChecked
+////            cur_flat.isArenda = flatSettingsFragmentView.cbIsArenda.isChecked
+////
+////            cur_flat.lic = flatSettingsFragmentView.etLic.text.toString()
+////
+////            cur_flat.dayStart = Str2Int(flatSettingsFragmentView.etDayBeg.text.toString())
+////            cur_flat.dayEnd = Str2Int(flatSettingsFragmentView.etDayEnd.text.toString())
+////
+////            cur_flat.dayArenda = Str2Int(flatSettingsFragmentView.etDayArenda.text.toString())
+////
+////            var str_summa_arenda = flatSettingsFragmentView.etSummaArenda.text.toString()
+////            if (TextUtils.isEmpty(str_summa_arenda)) {
+////                str_summa_arenda = "0.0"
+////            }
+////            cur_flat.summaArenda = java.lang.Double.parseDouble(str_summa_arenda)
+//        }
+
+        viewModel.onClickAddFlat(currentFlat)
+
+    }
+
+    private fun exitFromFlatView(flat: Flat) {
         activity?.also { activity ->
-            Navigator.exitFromFlatActivity(activity, cur_flat)
+            Navigator.exitFromFlatActivity(activity, flat)
         }
-
     }
 
 }

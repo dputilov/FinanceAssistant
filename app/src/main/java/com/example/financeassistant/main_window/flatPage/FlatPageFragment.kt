@@ -31,6 +31,7 @@ import com.example.financeassistant.flatPayment.FlatPaymentListActivity
 import com.example.financeassistant.main_window.flatPage.FlatListAdapter
 import com.example.financeassistant.main_window.flatPage.FlatListAdapterDelegate
 import com.example.financeassistant.main_window.flatPage.FlatListViewModel
+import com.example.financeassistant.manager.RoomDatabaseManager
 import com.example.financeassistant.manager.SettingsManager
 import com.example.financeassistant.utils.Navigator
 import com.example.financeassistant.utils.NavigatorResultCode
@@ -135,7 +136,7 @@ class FlatPageFragment : BaseFragment<ActivityFlatBinding>(), FlatListAdapterDel
         }
         if (id == R.id.action_option_delete_all) {
 
-            //  DeleteAll();
+              DeleteAll();
 
         }
 
@@ -323,7 +324,7 @@ class FlatPageFragment : BaseFragment<ActivityFlatBinding>(), FlatListAdapterDel
     }
 
     fun DeleteAll() {
-        db.flat_DeleteAll()
+        RoomDatabaseManager.instance.database.flatDao().deleteAll()
     }
 
     private fun showFlatLoadingIndicator() {

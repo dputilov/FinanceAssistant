@@ -18,4 +18,9 @@ interface FlatDao : BaseDao<FlatEntity>{
     @Query("SELECT * FROM ${RoomDatabaseSettings.ROOM_DB_FLAT_TABLE} WHERE uid IN (:flatUids)")
     fun loadAllByUids(flatUids: List<String>): Flowable<List<FlatEntity>>
 
+    @Query("SELECT * FROM ${RoomDatabaseSettings.ROOM_DB_FLAT_TABLE}")
+    fun getAllTest(): List<FlatEntity>
+
+    @Query("DELETE FROM ${RoomDatabaseSettings.ROOM_DB_FLAT_TABLE}")
+    fun deleteAll()
 }

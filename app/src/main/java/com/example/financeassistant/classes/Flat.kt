@@ -113,6 +113,9 @@ data class Flat(
     @SerializedName("SourceImage")
     var sourceImage: SourceImage? = null,
 
+    @SerializedName("CreditUid")
+    var creditUid: String? = "",
+
 ) : ServerResponse() {
 
     fun isNew() : Boolean = (id == UNDEFINED_ID)

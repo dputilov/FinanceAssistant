@@ -17,7 +17,7 @@ import java.util.Date
 data class FlatEntity(
     @PrimaryKey
     @SerializedName("Uid")
-    val uid: String,
+    var uid: String,
 
     @ColumnInfo(name = "type")
     @SerializedName("Type")

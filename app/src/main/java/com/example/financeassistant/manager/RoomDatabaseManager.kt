@@ -30,6 +30,7 @@ class RoomDatabaseManager {
                 AppDatabase::class.java,
                 RoomDatabaseSettings.ROOM_DB_NAME
             )
+            .allowMainThreadQueries() // // TODO REMOVE ON PROD. Allow Main Tread Query
             .fallbackToDestructiveMigration() // TODO REMOVE ON PROD. Clear data when database has been changed
             .addMigrations(AppDatabase.MIGRATION_1_2)
             .build()
